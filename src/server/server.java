@@ -11,68 +11,60 @@ import java.net.*;
  * */
 public class server {
 
-    // initialize socket and input stream
-    private Socket socket = null;
-    private ServerSocket server = null;
-    private DataInputStream in = null;
-
-    // constructor with port
-    public server(int port)
+    public static void main(String args[])
+            throws Exception
     {
 
-        // starts server and waits for a connection
-        try {
-            server = new ServerSocket(port);
+        // Create server Socket
+        ServerSocket ss = new ServerSocket(888);
 
-            System.out.println("Server started");
+        // connect it to client socket
+        Socket s = ss.accept();
+        System.out.println("Connection established");
 
-            System.out.println("Waiting for a client ...");
+        // to send data to the client
+        PrintStream ps
+                = new PrintStream(s.getOutputStream());
 
-            socket = server.accept();
+        // to read data coming from the client
+        BufferedReader br
+                = new BufferedReader(
+                new InputStreamReader(
+                        s.getInputStream()));
 
-            System.out.println("Client accepted");
+        // to read data from the keyboard
+        BufferedReader kb
+                = new BufferedReader(
+                new InputStreamReader(System.in));
 
-            // takes input from the client socket
-            in = new DataInputStream(
-                    new BufferedInputStream(
-                            socket.getInputStream()));
+        // server executes continuously
+        while (true) {
 
-            String line = "";
+            String str, str1;
 
-            // reads message from client until "End" is sent
-            while (!line.equals("End")) {
+            // repeat as long as the client
+            // does not send a null string
 
-                try {
+            // read from client
+            while ((str = br.readLine()) != null) {
+                System.out.println(str);
+                str1 = kb.readLine();
 
-                    line = in.readUTF();
-
-                    System.out.println(line);
-                }
-
-                catch (IOException i) {
-
-                    System.out.println(i);
-                }
+                // send to client
+                ps.println(str1);
             }
 
-            System.out.println("Closing connection");
-
             // close connection
-            socket.close();
+            ps.close();
+            br.close();
+            kb.close();
+            ss.close();
+            s.close();
 
-            in.close();
-        }
+            // terminate application
+            System.exit(0);
 
-        catch (IOException i) {
-
-            System.out.println(i);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-
-        server server = new server(5000);
+        } // end of while
     }
 }
 

@@ -64,9 +64,4 @@ public class GameState {
     public void executePhase(Phase phase) {
         phase.execute(this);
     }
-
-    public Player getCurrentPlayer() {
-        // return the player whose turn it is
-    }
-
 }

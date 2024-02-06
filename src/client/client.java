@@ -8,78 +8,47 @@ import java.net.*;
  * We need to split this code into different functions instead of having all in the constructor.
  * */
 public class client {
-    // initialize socket and input output streams
-    private Socket socket = null;
-    private DataInputStream input = null;
-    private DataOutputStream out = null;
-
-    // constructor to put ip address and port
-    public client(String address, int port)
-    {
-
-        // establish a connection
-        try {
-
-            socket = new Socket(address, port);
-
-            System.out.println("Connected");
-
-            // takes input from terminal
-            input = new DataInputStream(System.in);
-
-            // sends output to the socket
-            out = new DataOutputStream(
-                    socket.getOutputStream());
-        }
-
-        catch (UnknownHostException u) {
-
-            System.out.println(u);
-        }
-
-        catch (IOException i) {
-
-            System.out.println(i);
-        }
-
-        // string to read message from input
-        String line = "";
-
-        // keep reading until "End" is input
-        while (!line.equals("End")) {
-
-            try {
-
-                line = input.readLine();
-
-                out.writeUTF(line);
-            }
-
-            catch (IOException i) {
-
-                System.out.println(i);
-            }
-        }
-
-        // close the connection
-        try {
-
-            input.close();
-
-            out.close();
-
-            socket.close();
-        }
-
-        catch (IOException i) {
-
-            System.out.println(i);
-        }
-    }
-
     public static void main(String[] args)
+            throws Exception
     {
 
-        client client = new client("127.0.0.1", 5000);
+        // Create client socket
+        Socket s = new Socket("localhost", 888);
+
+        // to send data to the server
+        DataOutputStream dos
+                = new DataOutputStream(
+                s.getOutputStream());
+
+        // to read data coming from the server
+        BufferedReader br
+                = new BufferedReader(
+                new InputStreamReader(
+                        s.getInputStream()));
+
+        // to read data from the keyboard
+        BufferedReader kb
+                = new BufferedReader(
+                new InputStreamReader(System.in));
+        String str, str1;
+
+        // repeat as long as exit
+        // is not typed at client
+        while (!(str = kb.readLine()).equals("exit")) {
+
+            // send to the server
+            dos.writeBytes(str + "\n");
+
+            // receive from the server
+            str1 = br.readLine();
+
+            System.out.println(str1);
+        }
+
+        // close connection.
+        dos.close();
+        br.close();
+        kb.close();
+        s.close();
     }
 }

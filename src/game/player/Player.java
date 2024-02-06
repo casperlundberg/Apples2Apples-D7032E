@@ -12,6 +12,7 @@ public class Player {
     private final int MAX_HAND_SIZE = 7;
     private boolean isJudge;
     private boolean isBot;
+    private boolean playedRedApple;
 
     public Player(String name) {
         this.name = name;
