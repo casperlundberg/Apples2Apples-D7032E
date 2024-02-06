@@ -1,4 +1,4 @@
-package game.player;
+package game.players;
 
 import game.apples.GreenApple;
 import game.apples.RedApple;
@@ -6,6 +6,7 @@ import game.apples.RedApple;
 import java.util.ArrayList;
 
 public class Player {
+    private int playerId;
     private final String name;
     private ArrayList<GreenApple> greenApplesWon;
     private ArrayList<RedApple> hand;
@@ -15,17 +16,32 @@ public class Player {
     private boolean playedRedApple;
 
     public Player(String name) {
+        this(name, false);
+    }
+
+    public Player(String name, boolean isBot) {
         this.name = name;
+        this.isBot = isBot;
         this.greenApplesWon = new ArrayList<>();
+        generatePlayerId();
+    }
+
+    // function that generates a unique player id for each player
+    public void generatePlayerId() {
+        this.playerId = Math.abs(name.hashCode());
+    }
+
+    public int getPlayerId() {
+        return playerId;
     }
 
     public String getName() {
         return name;
     }
 
-    public void drawRedAppleUntilFullHand(RedApple redApple) {
-        if (hand.size() < MAX_HAND_SIZE) {
-            hand.add(redApple);
+    public void drawRedAppleUntilFullHand(ArrayList<RedApple> redApples) {
+        while (hand.size() < MAX_HAND_SIZE && !redApples.isEmpty()) {
+            hand.add(redApples.remove(0));
         }
     }
 
@@ -44,5 +60,11 @@ public class Player {
 
     public void winGreenApple(GreenApple greenApple) {
         greenApplesWon.add(greenApple);
+    }
+
+    public void printHand() {
+        for (int i = 0; i < hand.size(); i++) {
+            System.out.println("[" + i + "]   " + hand.get(i).getContent());
+        }
     }
 }
