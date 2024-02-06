@@ -1,4 +1,4 @@
-package apples;
+package game.apples;
 
 public class GreenApple extends Apple{
     public GreenApple(String content) {
