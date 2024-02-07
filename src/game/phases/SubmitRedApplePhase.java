@@ -2,10 +2,11 @@ package game.phases;
 
 import game.GameState;
 
-public class SubmitRedApplePhase extends Phase{
-    public void execute(GameState gameState) {
-        for (int i = 0; i < gameState.getPlayers().size(); i++) {
-            // wait for client to submit red apple
-        }
+import java.util.Collections;
+
+public class SubmitRedApplePhase extends Phase {
+    public void execute(GameState gameState){
+        // randomize the order of the played red apples
+        Collections.shuffle(gameState.getRedApplesToBeJudged());
     }
 }

@@ -1,5 +1,6 @@
 package game.players;
 
+import game.GameState;
 import game.apples.GreenApple;
 import game.apples.RedApple;
 
@@ -51,7 +52,6 @@ public class Player {
             return;
         }
         hand.remove(redApple);
-        // Send red apple to the game server
     }
 
     public int getScore() {
@@ -66,5 +66,13 @@ public class Player {
         for (int i = 0; i < hand.size(); i++) {
             System.out.println("[" + i + "]   " + hand.get(i).getContent());
         }
+    }
+
+    public void setJudge(boolean b) {
+        isJudge = b;
+    }
+
+    public boolean isJudge() {
+        return isJudge;
     }
 }
