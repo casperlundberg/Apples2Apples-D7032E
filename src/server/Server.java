@@ -13,59 +13,68 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         ServerSocket serverSocket = new ServerSocket(8080);
         System.out.println("Server is listening on port 8080");
 
         GameState gameState = new GameState();
 
         while (true) {
+            // Accept new client and add the player to the game along with their socket
             Socket socket = serverSocket.accept();
             System.out.println("New client connected");
+            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+            Player player = (Player) inputStream.readObject();
+            player.setSocket(socket);
+            gameState.addPlayer(player);
+
+            // If all players have joined, start the game
             Phase currentPhase = gameState.getCurrentPhase();
-
-            try {
-                ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-
-                outputStream.writeObject(gameState.getCurrentPhase());
-                outputStream.flush();
-                if (currentPhase instanceof WaitForPlayersPhase) {
-                    System.out.println("It's the wait for players phase");
-                    Player player = (Player) inputStream.readObject();
-                    gameState.addPlayer(player);
-                    if (gameState.allPlayersJoined()) {
-                        gameState.executePhase(currentPhase);
-                    }
-                } else if (currentPhase instanceof DrawGreenApplePhase) {
-                    System.out.println("It's the draw green apple phase");
-                    gameState.executePhase(currentPhase);
-                    outputStream.writeObject(gameState.getCurrentGreenApple());
-                    outputStream.flush();
-
-                } else if (currentPhase instanceof SubmitRedApplePhase) {
-                    System.out.println("It's the submit red apple phase");
-                    PlayerPlayedRedAppleModel playerPlayedRedAppleModel = (PlayerPlayedRedAppleModel) inputStream.readObject();
-                    gameState.playerPlayedRedApple(playerPlayedRedAppleModel);
-
-                    if (gameState.allPlayersSubmittedRedApples()) {
-                        gameState.executePhase(currentPhase);
-                    }
-                } else if (currentPhase instanceof JudgePhase) {
-                    System.out.println("It's the judge phase");
-                    outputStream.writeObject(gameState.getRedApplesToBeJudged());
-
-                    RedApple winningRedApple = (RedApple) inputStream.readObject();
-                    Player winningPlayer = gameState.getWinningPlayer(winningRedApple);
-
-                    gameState.executePhase(currentPhase);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            if (gameState.allPlayersJoined()) {
+                currentPhase.execute(socket, gameState);
             }
+
+
+
+
+//            try {
+
+//                if (currentPhase instanceof WaitForPlayersPhase) {
+//                    System.out.println("It's the wait for players phase");
+//                    Player player = (Player) inputStream.readObject();
+//                    gameState.addPlayer(player);
+//                    if (gameState.allPlayersJoined()) {
+//                        gameState.executePhase(currentPhase);
+//                    }
+//                } else if (currentPhase instanceof DrawGreenApplePhase) {
+//                    System.out.println("It's the draw green apple phase");
+//                    gameState.executePhase(currentPhase);
+//                    outputStream.writeObject(gameState.getCurrentGreenApple());
+//                    outputStream.flush();
+//
+//                } else if (currentPhase instanceof SubmitRedApplePhase) {
+//                    System.out.println("It's the submit red apple phase");
+//                    PlayerPlayedRedAppleModel playerPlayedRedAppleModel = (PlayerPlayedRedAppleModel) inputStream.readObject();
+//                    gameState.playerPlayedRedApple(playerPlayedRedAppleModel);
+//
+//                    if (gameState.allPlayersSubmittedRedApples()) {
+//                        gameState.executePhase(currentPhase);
+//                    }
+//                } else if (currentPhase instanceof JudgePhase) {
+//                    System.out.println("It's the judge phase");
+//                    outputStream.writeObject(gameState.getRedApplesToBeJudged());
+//
+//                    RedApple winningRedApple = (RedApple) inputStream.readObject();
+//                    Player winningPlayer = gameState.getWinningPlayer(winningRedApple);
+//
+//                    gameState.executePhase(currentPhase);
+//                }
+
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (ClassNotFoundException e) {
+//                throw new RuntimeException(e);
+//            }
         }
     }
 }

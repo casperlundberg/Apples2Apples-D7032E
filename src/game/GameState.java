@@ -12,15 +12,14 @@ import java.util.*;
 
 
 public class GameState {
-    private ArrayList<Player> players;
-    private int amountOfPlayers = 1; // Default to 1
+    private final ArrayList<Player> players;
+    private int amountOfHumanPlayers = 1; // Default to 1
     private int amountOfBots = 3; // Default to 3
     private final int MIN_PLAYERS_AND_BOTS_COMBINED = 4;
     private ArrayList<Player> playersWhoSubmittedRedApples;
     private ArrayList<GreenApple> greenAppleDeck;
     private ArrayList<RedApple> redAppleDeck;
     private ArrayList<Phase> phases;
-    private GreenApple currentGreenApple;
     private ArrayList<PlayerPlayedRedAppleModel> submittedRedApplesModel; // Because we need to keep track of who played what red apple
 
     public GameState() {
@@ -69,13 +68,6 @@ public class GameState {
         return player.getPlayerId();
     }
 
-    public int addPlayer(String name) {
-        Player player = new Player(name);
-        player.drawRedAppleUntilFullHand(redAppleDeck);
-        players.add(player);
-        return player.getPlayerId();
-    }
-
     public void removePlayer(Player player) {
         players.remove(player);
     }
@@ -107,7 +99,7 @@ public class GameState {
 
 
     public GreenApple getCurrentGreenApple() {
-        return currentGreenApple;
+        return greenAppleDeck.get(0);
     }
 
     public void addGreenAppleToDeck(GreenApple greenApple) {
@@ -119,7 +111,11 @@ public class GameState {
     }
 
     public void setCurrentGreenApple(GreenApple currentGreenApple) {
-        this.currentGreenApple = currentGreenApple;
+        greenAppleDeck.set(0, currentGreenApple);
+    }
+
+    public void drawGreenApple() {
+        greenAppleDeck.remove(0);
     }
 
     public void setSubmittedRedAppleModel(ArrayList<PlayerPlayedRedAppleModel> submitted) {
@@ -147,8 +143,7 @@ public class GameState {
         return phases.get(0);
     }
 
-    public void executePhase(Phase phase) {
-        phase.execute(this);
+    public void nextPhase() {
         phases.add(phases.remove(0));
     }
 
@@ -188,11 +183,11 @@ public class GameState {
     }
 
     public boolean allPlayersJoined() {
-        return players.size() == amountOfPlayers + amountOfBots;
+        return players.size() == amountOfHumanPlayers + amountOfBots;
     }
 
-    public void setAmountOfPlayers(int amountOfPlayers) {
-        this.amountOfPlayers = amountOfPlayers;
+    public void setAmountOfHumanPlayers(int amountOfHumanPlayers) {
+        this.amountOfHumanPlayers = amountOfHumanPlayers;
     }
 
     public void setAmountOfBots(int amountOfBots) {

@@ -4,8 +4,8 @@ import game.players.Player;
 import java.io.Serializable;
 
 public class PlayerPlayedRedAppleModel implements Serializable {
-    private Player player;
-    private RedApple redApple;
+    private final Player player;
+    private final RedApple redApple;
 
     public PlayerPlayedRedAppleModel(Player player, RedApple redApple) {
         this.player = player;

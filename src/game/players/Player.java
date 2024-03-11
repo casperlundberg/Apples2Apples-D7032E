@@ -1,14 +1,15 @@
 package game.players;
 
-import game.GameState;
 import game.apples.GreenApple;
 import game.apples.RedApple;
+import java.net.Socket;
 
 import java.util.ArrayList;
 
 public class Player {
     private int playerId;
     private final String name;
+    private Socket socket;
     private ArrayList<GreenApple> greenApplesWon;
     private ArrayList<RedApple> hand;
     private final int MAX_HAND_SIZE = 7;
@@ -16,8 +17,8 @@ public class Player {
     private boolean isBot;
     private boolean playedRedApple;
 
-    public Player(String name) {
-        this(name, false);
+    public Player(String name ) {
+        this(name ,  false);
     }
 
     public Player(String name, boolean isBot) {
@@ -38,6 +39,10 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isBot() {
+        return isBot;
     }
 
     public void drawRedAppleUntilFullHand(ArrayList<RedApple> redApples) {
@@ -74,5 +79,13 @@ public class Player {
 
     public boolean isJudge() {
         return isJudge;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }
