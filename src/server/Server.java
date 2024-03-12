@@ -31,50 +31,9 @@ public class Server {
             // If all players have joined, start the game
             Phase currentPhase = gameState.getCurrentPhase();
             if (gameState.allPlayersJoined()) {
-                currentPhase.execute(socket, gameState);
+                gameState = currentPhase.execute(socket, gameState);
+                gameState.nextPhase();
             }
-
-
-
-
-//            try {
-
-//                if (currentPhase instanceof WaitForPlayersPhase) {
-//                    System.out.println("It's the wait for players phase");
-//                    Player player = (Player) inputStream.readObject();
-//                    gameState.addPlayer(player);
-//                    if (gameState.allPlayersJoined()) {
-//                        gameState.executePhase(currentPhase);
-//                    }
-//                } else if (currentPhase instanceof DrawGreenApplePhase) {
-//                    System.out.println("It's the draw green apple phase");
-//                    gameState.executePhase(currentPhase);
-//                    outputStream.writeObject(gameState.getCurrentGreenApple());
-//                    outputStream.flush();
-//
-//                } else if (currentPhase instanceof SubmitRedApplePhase) {
-//                    System.out.println("It's the submit red apple phase");
-//                    PlayerPlayedRedAppleModel playerPlayedRedAppleModel = (PlayerPlayedRedAppleModel) inputStream.readObject();
-//                    gameState.playerPlayedRedApple(playerPlayedRedAppleModel);
-//
-//                    if (gameState.allPlayersSubmittedRedApples()) {
-//                        gameState.executePhase(currentPhase);
-//                    }
-//                } else if (currentPhase instanceof JudgePhase) {
-//                    System.out.println("It's the judge phase");
-//                    outputStream.writeObject(gameState.getRedApplesToBeJudged());
-//
-//                    RedApple winningRedApple = (RedApple) inputStream.readObject();
-//                    Player winningPlayer = gameState.getWinningPlayer(winningRedApple);
-//
-//                    gameState.executePhase(currentPhase);
-//                }
-
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } catch (ClassNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
         }
     }
 }

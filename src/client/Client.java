@@ -31,6 +31,6 @@ public class Client {
         inputStream = new ObjectInputStream(socket.getInputStream());
         Phase currentPhase = (Phase) inputStream.readObject();
 
-        currentPhase.executeOnClient(socket);
+        currentPhase.executeOnClient(socket, player);
     }
 }

@@ -1,28 +1,19 @@
 package game.phases;
 
 import game.GameState;
-import game.apples.GreenApple;
 import game.players.Player;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class DrawGreenApplePhase extends Phase {
-    private GreenApple greenApple;
+public class FillHandsPhase extends Phase {
     /**
      * @param socket the socket to execute on
      * @param state  the game state
      */
     @Override
     public GameState execute(Socket socket, GameState state) throws IOException {
-        state.drawGreenApple();
-        greenApple = state.getCurrentGreenApple();
-        state.addGreenAppleToDeck(state.getCurrentGreenApple());
-        // notify all players of the current green apple
-        for (Player player : state.getPlayers()) {
-            notifyClient(player.getSocket(), state);
-        }
+        state.fillPlayersHands();
         return state;
     }
 
@@ -42,6 +33,6 @@ public class DrawGreenApplePhase extends Phase {
      */
     @Override
     public void executeOnClient(Socket socket, Player player) {
-        System.out.println("The current green apple is: " + greenApple.getContent());
+        System.out.println("Your hand is: " + player.getHand());
     }
 }

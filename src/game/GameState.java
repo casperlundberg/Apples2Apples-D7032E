@@ -33,6 +33,8 @@ public class GameState {
         this.phases = new ArrayList<>();
         this.phases.add(new DrawGreenApplePhase());
         this.phases.add(new SubmitRedApplePhase());
+        this.phases.add(new JudgePhase());
+        this.phases.add(new FillHandsPhase());
     }
     private void loadGreenApples() {
         this.greenAppleDeck = new ArrayList<>();
@@ -97,9 +99,14 @@ public class GameState {
         return redAppleDeck;
     }
 
-
     public GreenApple getCurrentGreenApple() {
         return greenAppleDeck.get(0);
+    }
+
+    public void fillPlayersHands() {
+        for (Player player : players) {
+            redAppleDeck = player.drawRedAppleUntilFullHand(redAppleDeck);
+        }
     }
 
     public void addGreenAppleToDeck(GreenApple greenApple) {

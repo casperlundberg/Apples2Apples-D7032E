@@ -14,8 +14,9 @@ public class JudgePhase extends Phase{
      * @throws IOException
      */
     @Override
-    public void execute(Socket socket, GameState state) throws IOException {
+    public GameState execute(Socket socket, GameState state) throws IOException {
         Player judge = state.getJudge();
+        return state;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class JudgePhase extends Phase{
     }
 
     @Override
-    public void executeOnClient(Socket socket) {
+    public void executeOnClient(Socket socket, Player player) {
 
     }
 }

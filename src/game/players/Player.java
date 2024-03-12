@@ -5,6 +5,7 @@ import game.apples.RedApple;
 import java.net.Socket;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Player {
     private int playerId;
@@ -45,10 +46,11 @@ public class Player {
         return isBot;
     }
 
-    public void drawRedAppleUntilFullHand(ArrayList<RedApple> redApples) {
+    public ArrayList<RedApple> drawRedAppleUntilFullHand(ArrayList<RedApple> redApples) {
         while (hand.size() < MAX_HAND_SIZE && !redApples.isEmpty()) {
             hand.add(redApples.remove(0));
         }
+        return redApples;
     }
 
     public void playRedApple(RedApple redApple) {
@@ -71,6 +73,20 @@ public class Player {
         for (int i = 0; i < hand.size(); i++) {
             System.out.println("[" + i + "]   " + hand.get(i).getContent());
         }
+    }
+
+    public ArrayList<RedApple> getHand() {
+        return hand;
+    }
+
+    public void setHand(ArrayList<RedApple> hand) {
+        this.hand = hand;
+    }
+
+    public RedApple chooseRedApple() {
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        return hand.remove(choice);
     }
 
     public void setJudge(boolean b) {
