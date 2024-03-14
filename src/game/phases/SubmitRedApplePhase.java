@@ -10,62 +10,65 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class SubmitRedApplePhase extends Phase {
-    ArrayList<PlayerPlayedRedAppleModel> redApplesPlayed;
 
     /**
      * Executes the phase on the server
-     * @param socket the socket to execute on
      * @param state  the game state
      * @throws IOException
      */
     @Override
-    public GameState execute(Socket socket, GameState state) throws IOException, ClassNotFoundException {
-        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-        state.newJudge(); // Set a new judge
+    public GameState execute(GameState state) throws IOException, ClassNotFoundException {
+        state.nextJudge(); // Set next player as judge if judge exist, otherwise randomize
+
+        List<Thread> threads = new ArrayList<>();
         for (Player player : state.getPlayers()) {
-            if (!player.isJudge()) {
-                notifyClient(player.getSocket(), state); // notify all players to submit red apples
+            if (!player.isJudge() && !state.playerThatPlayedRedApple(player)) {
+                Thread thread = new Thread(() -> {
+                    try {
+                        System.out.println("Waiting for " + player.getName() + " to submit a red apple");
+                        Socket socket = player.getSocket();
+                        super.notifyClient(socket); // notify player to submit red apple
 
-                // how to wait for clients to send their red apples?
-
-                // receive the red apple played by the player
-                PlayerPlayedRedAppleModel playRedApple = (PlayerPlayedRedAppleModel) inputStream.readObject();
-                state.addPlayerPlayedRedAppleModel(playRedApple);
+                        // receive the red apple played by the player
+                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                        PlayerPlayedRedAppleModel playRedApple = (PlayerPlayedRedAppleModel) inputStream.readObject();
+                        state.addPlayerPlayedRedAppleModel(playRedApple);
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                });
+                threads.add(thread);
+                thread.start();
             }
         }
 
-        if (state.allPlayersSubmittedRedApples()) {
-            // randomize the order of the submitted red apples while keeping track of who submitted them
-            ArrayList<PlayerPlayedRedAppleModel> redApplesPlayed = state.getSubmittedRedAppleModel();
-            Collections.shuffle(redApplesPlayed);
-            state.setSubmittedRedAppleModel(redApplesPlayed);
-            return state;
+        // Wait for all threads to finish
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+            // Shuffle the submitted playerPlayedRedApple models
+        Collections.shuffle(state.getSubmittedRedAppleModel());
 
-        System.out.println("Not all players have submitted red apples yet");
+
+        // all players have submitted red apples
         return state;
     }
 
     /**
-     * Sends the current phase to the client
-     * @param socket the socket to notify
-     * @param state  the game state
-     */
-    @Override
-    public void notifyClient(Socket socket, GameState state) throws IOException {
-        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(this); // send the current phase
-        outputStream.flush();
-    }
-
-    /**
      * Executes the phase on the client
+     *
      * @param socket the socket to execute on
+     * @return
      */
     @Override
-    public void executeOnClient(Socket socket, Player player) throws IOException {
+    public Player executeOnClient(Socket socket, Player player) throws IOException {
         if (!player.isJudge()) {
             System.out.println("Choose a red apple to play: ");
             player.printHand();
@@ -77,5 +80,6 @@ public class SubmitRedApplePhase extends Phase {
             outputStream.writeObject(playRedApple);
             outputStream.flush();
         }
+        return player;
     }
 }

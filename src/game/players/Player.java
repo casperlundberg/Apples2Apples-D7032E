@@ -6,17 +6,18 @@ import java.net.Socket;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.io.Serializable;
 
-public class Player {
+public class Player implements Serializable {
     private int playerId;
     private final String name;
     private Socket socket;
-    private ArrayList<GreenApple> greenApplesWon;
+    private final ArrayList<GreenApple> greenApplesWon;
     private ArrayList<RedApple> hand;
     private final int MAX_HAND_SIZE = 7;
     private boolean isJudge;
-    private boolean isBot;
-    private boolean playedRedApple;
+    private final boolean isBot;
+    private boolean playedRedApple; // can be used instead of playerPlayedAppleModel probably
 
     public Player(String name ) {
         this(name ,  false);
@@ -25,6 +26,7 @@ public class Player {
     public Player(String name, boolean isBot) {
         this.name = name;
         this.isBot = isBot;
+        this.hand = new ArrayList<>();
         this.greenApplesWon = new ArrayList<>();
         generatePlayerId();
     }

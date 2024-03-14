@@ -20,19 +20,22 @@ public class Server {
         GameState gameState = new GameState();
 
         while (true) {
-            // Accept new client and add the player to the game along with their socket
-            Socket socket = serverSocket.accept();
-            System.out.println("New client connected");
-            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-            Player player = (Player) inputStream.readObject();
-            player.setSocket(socket);
-            gameState.addPlayer(player);
-
             // If all players have joined, start the game
             Phase currentPhase = gameState.getCurrentPhase();
+            System.out.println("Current phase: " + currentPhase.getClass().getSimpleName());
             if (gameState.allPlayersJoined()) {
-                gameState = currentPhase.execute(socket, gameState);
+                gameState = currentPhase.execute(gameState);
+
                 gameState.nextPhase();
+            } else {
+                // Accept new client and add the player to the game along with their socket
+                Socket socket = serverSocket.accept();
+                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                Player player = (Player) inputStream.readObject();
+                player.setSocket(socket);
+
+                System.out.println("New client connected on " + socket.getInetAddress() + ":" + socket.getPort() + " with username: " + player.getName());
+                gameState.addPlayer(player);
             }
         }
     }

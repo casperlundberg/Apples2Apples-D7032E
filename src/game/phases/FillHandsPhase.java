@@ -1,38 +1,36 @@
 package game.phases;
 
 import game.GameState;
+import game.apples.RedApple;
 import game.players.Player;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class FillHandsPhase extends Phase {
+    private ArrayList<RedApple> newHand;
     /**
-     * @param socket the socket to execute on
      * @param state  the game state
      */
     @Override
-    public GameState execute(Socket socket, GameState state) throws IOException {
+    public GameState execute(GameState state) throws IOException {
         state.fillPlayersHands();
+        for (Player player : state.getPlayers()) {
+            newHand = player.getHand();
+            super.notifyClient(player.getSocket());
+        }
         return state;
     }
 
-    /**
-     * @param socket the socket to notify
-     * @param state  the game state
-     */
-    @Override
-    public void notifyClient(Socket socket, GameState state) throws IOException {
-        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(this); // send the current phase
-        outputStream.flush();
-    }
 
     /**
      * @param socket the socket to execute on
+     * @return
      */
     @Override
-    public void executeOnClient(Socket socket, Player player) {
-        System.out.println("Your hand is: " + player.getHand());
+    public Player executeOnClient(Socket socket, Player player) {
+        player.setHand(newHand);
+        return player;
     }
 }

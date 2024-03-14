@@ -28,9 +28,12 @@ public class Client {
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(player);
 
-        inputStream = new ObjectInputStream(socket.getInputStream());
-        Phase currentPhase = (Phase) inputStream.readObject();
+        while (true) {
+            inputStream = new ObjectInputStream(socket.getInputStream());
+            Phase currentPhase = (Phase) inputStream.readObject();
+            System.out.println("Current phase: " + currentPhase.getClass().getSimpleName());
 
-        currentPhase.executeOnClient(socket, player);
+            player = currentPhase.executeOnClient(socket, player);
+        }
     }
 }
