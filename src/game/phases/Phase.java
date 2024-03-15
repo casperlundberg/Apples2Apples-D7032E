@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 /**
  * This abstract class represents a phase in the game.
- * Each phase has its own implementation of the execute and executeOnClient methods.
+ * Each phase has its own implementation of the executeOnServer and executeOnClient methods.
  * The notifyClient method is common for all phases and is used to notify the client about the current phase.
  */
 public abstract class Phase implements Serializable {
@@ -24,20 +24,7 @@ public abstract class Phase implements Serializable {
      * @throws IOException if an I/O error occurs
      * @throws ClassNotFoundException if the class of a serialized object cannot be found
      */
-    public abstract GameState execute(GameState state) throws IOException, ClassNotFoundException;
-
-    /**
-     * This method is used to notify the client about the current phase.
-     * It sends the current phase object to the client through the provided socket.
-     *
-     * @param socket the socket to send the phase object to
-     * @throws IOException if an I/O error occurs
-     */
-    public void notifyClient(Socket socket) throws IOException {
-        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(this); // send the current phase
-        outputStream.flush();
-    }
+    public abstract GameState executeOnServer(GameState state) throws IOException, ClassNotFoundException;
 
     /**
      * This method is used to execute the current phase on the client side.
@@ -49,4 +36,18 @@ public abstract class Phase implements Serializable {
      * @throws IOException if an I/O error occurs
      */
     public abstract Player executeOnClient(Socket socket, Player player) throws IOException;
+
+    /**
+     * This method is used to notify the client about the current phase.
+     * It sends the current phase object to the client through the provided socket.
+     *
+     * @param socket the socket to send the phase object to
+     * @throws IOException if an I/O error occurs
+     */
+
+    public void notifyClient(Socket socket) throws IOException {
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(this); // send the current phase
+        outputStream.flush();
+    }
 }

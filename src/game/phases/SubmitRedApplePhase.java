@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SubmitRedApplePhase extends Phase {
+    int judgeId;
 
     /**
      * Executes the phase on the server
@@ -20,29 +21,34 @@ public class SubmitRedApplePhase extends Phase {
      * @throws IOException
      */
     @Override
-    public GameState execute(GameState state) throws IOException, ClassNotFoundException {
-        state.nextJudge(); // Set next player as judge if judge exist, otherwise randomize
+    public GameState executeOnServer(GameState state) throws IOException, ClassNotFoundException {
 
         List<Thread> threads = new ArrayList<>();
         for (Player player : state.getPlayers()) {
-            if (!player.isJudge() && !state.playerThatPlayedRedApple(player)) {
-                Thread thread = new Thread(() -> {
-                    try {
-                        System.out.println("Waiting for " + player.getName() + " to submit a red apple");
+            Thread thread = new Thread(() -> {
+                try {
                         Socket socket = player.getSocket();
-                        super.notifyClient(socket); // notify player to submit red apple
+                        if (!player.isJudge() && !state.playerThatPlayedRedApple(player)) {
+                            System.out.println("Waiting for " + player.getName() + " to submit a red apple"); // server side
 
-                        // receive the red apple played by the player
-                        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                        PlayerPlayedRedAppleModel playRedApple = (PlayerPlayedRedAppleModel) inputStream.readObject();
-                        state.addPlayerPlayedRedAppleModel(playRedApple);
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                });
-                threads.add(thread);
-                thread.start();
-            }
+                            super.notifyClient(socket); // notify player to submit red apple
+
+                            // receive the red apple played by the player
+                            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                            PlayerPlayedRedAppleModel playedRedApple = (PlayerPlayedRedAppleModel) inputStream.readObject();
+                            state.PlayerPlayedRedApple(playedRedApple);
+
+                            System.out.println(player.getName() + " submitted a red apple"); // server side
+                        } else {
+                            judgeId = state.getJudge().getPlayerId();
+                            super.notifyClient(socket); // notify player that they are the judge
+                        }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            });
+            threads.add(thread);
+            thread.start();
         }
 
         // Wait for all threads to finish
@@ -64,11 +70,12 @@ public class SubmitRedApplePhase extends Phase {
      * Executes the phase on the client
      *
      * @param socket the socket to execute on
-     * @return
+     * @return the player
      */
     @Override
     public Player executeOnClient(Socket socket, Player player) throws IOException {
-        if (!player.isJudge()) {
+        if (player.getPlayerId() != judgeId) {
+            player.setJudge(false);
             System.out.println("Choose a red apple to play: ");
             player.printHand();
             RedApple redApple = player.chooseRedApple();
@@ -79,8 +86,9 @@ public class SubmitRedApplePhase extends Phase {
             outputStream.writeObject(playRedApple);
             outputStream.flush();
         } else {
-            System.out.println("You are the JUDGE, please wait for the other players to submit their red apples");
+            System.out.println("You are the judge, please wait for the other players to submit their red apples");
         }
+
         return player;
     }
 }

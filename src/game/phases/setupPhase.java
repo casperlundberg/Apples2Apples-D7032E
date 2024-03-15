@@ -4,33 +4,35 @@ import game.GameState;
 import game.apples.RedApple;
 import game.players.Player;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class FillHandsPhase extends Phase {
+public class setupPhase extends Phase {
     private ArrayList<RedApple> newHand;
+    private int playerId;
     /**
      * @param state  the game state
+     * @throws IOException if an I/O error occurs
      */
     @Override
-    public GameState execute(GameState state) throws IOException {
+    public GameState executeOnServer(GameState state) throws IOException {
         state.fillPlayersHands();
         for (Player player : state.getPlayers()) {
             newHand = player.getHand();
+            playerId = player.getPlayerId();
             super.notifyClient(player.getSocket());
         }
         return state;
     }
 
-
     /**
      * @param socket the socket to execute on
-     * @return
+     * @return the player
      */
     @Override
     public Player executeOnClient(Socket socket, Player player) {
         player.setHand(newHand);
+        player.setPlayerId(playerId);
         return player;
     }
 }

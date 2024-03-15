@@ -1,11 +1,6 @@
 package client;
 
-import game.GameState;
-import game.apples.GreenApple;
-import game.models.newPlayerModel;
-import game.phases.DrawGreenApplePhase;
 import game.phases.Phase;
-import game.phases.SubmitRedApplePhase;
 import game.players.Player;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,11 +20,10 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your name: ");
         String playerName = scanner.nextLine();
-        newPlayerModel playerModel = new newPlayerModel(playerName);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(playerModel);
+        outputStream.writeObject(playerName);
 
-        Player player = new Player(playerName);
+        Player player = new Player(playerName); // currently incorrect data on creation but the setupPhase corrects it
 
         while (true) {
             inputStream = new ObjectInputStream(socket.getInputStream());

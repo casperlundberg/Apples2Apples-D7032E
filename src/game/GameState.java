@@ -17,7 +17,7 @@ public class GameState {
     private int amountOfBots = 3; // Default to 3
     private int winningScore = 8; // Default to 8
     private final int MIN_PLAYERS_AND_BOTS_COMBINED = 4;
-    private final ArrayList<Player> playersWhoSubmittedRedApples;
+    private boolean gameEnded = false;
     private ArrayList<GreenApple> greenAppleDeck;
     private ArrayList<RedApple> redAppleDeck;
     private ArrayList<Phase> phases;
@@ -25,7 +25,6 @@ public class GameState {
 
     public GameState() {
         this.players = new ArrayList<>();
-        this.playersWhoSubmittedRedApples = new ArrayList<>();
         this.submittedRedApplesModel = new ArrayList<>();
         loadGreenApples();
         loadRedApples();
@@ -35,11 +34,12 @@ public class GameState {
 
     private void setupPhases() {
         this.phases = new ArrayList<>();
-        this.phases.add(new FillHandsPhase());
+        this.phases.add(new setupPhase());
         this.phases.add(new DrawGreenApplePhase());
         this.phases.add(new SubmitRedApplePhase());
         this.phases.add(new JudgePhase());
-        this.phases.add(new checkWinnerPhase());
+        this.phases.add(new checkGameWinnerPhase());
+        this.phases.add(new ReplenishPlayersHandsPhase());
     }
 
     private void setupScoring() {
@@ -81,10 +81,9 @@ public class GameState {
         return players;
     }
 
-    public int addPlayer(Player player) {
+    public void addPlayer(Player player) {
         player.drawRedAppleUntilFullHand(redAppleDeck);
         players.add(player);
-        return player.getPlayerId();
     }
 
     public void removePlayer(Player player) {
@@ -106,15 +105,8 @@ public class GameState {
                 return player;
             }
         }
+        System.out.println("Player not found");
         return null;
-    }
-
-    public ArrayList<Player> getPlayersWhoSubmittedRedApples() {
-        return playersWhoSubmittedRedApples;
-    }
-
-    public void addPlayerWhoSubmittedRedApple(Player player) {
-        playersWhoSubmittedRedApples.add(player);
     }
 
     public ArrayList<GreenApple> getGreenAppleDeck() {
@@ -143,24 +135,14 @@ public class GameState {
         return submittedRedApplesModel;
     }
 
-    public void setCurrentGreenApple(GreenApple currentGreenApple) {
-        greenAppleDeck.set(0, currentGreenApple);
-    }
-
-    public void setSubmittedRedAppleModel(ArrayList<PlayerPlayedRedAppleModel> submitted) {
-        this.submittedRedApplesModel = submitted;
-    }
-
-    public void addPlayerPlayedRedAppleModel(PlayerPlayedRedAppleModel playerPlayedRedAppleModel) {
+    public void PlayerPlayedRedApple(PlayerPlayedRedAppleModel playerPlayedRedAppleModel) {
         submittedRedApplesModel.add(playerPlayedRedAppleModel);
-    }
-
-    public void removeRedAppleModelFromCurrentRedAppleModels(PlayerPlayedRedAppleModel redApple) {
-        submittedRedApplesModel.remove(redApple);
-    }
-
-    public ArrayList<Phase> getPhases() {
-        return phases;
+        // remove played red apple from player's hand
+        for (Player player : players) {
+            if (player.getPlayerId() == playerPlayedRedAppleModel.getPlayerId()) {
+                player.removeRedApple(playerPlayedRedAppleModel.getRedApple());
+            }
+        }
     }
 
     public Phase getCurrentPhase() {
@@ -168,16 +150,18 @@ public class GameState {
     }
 
     public void nextPhase() {
-        phases.add(phases.remove(0));
-    }
-
-    public boolean allPlayersSubmittedRedApples() {
-        return playersWhoSubmittedRedApples.size() == players.size() - 1;
+        if (phases.get(0) instanceof setupPhase) {
+            phases.remove(0);
+        } else {
+            phases.add(phases.remove(0));
+        }
     }
 
     public void nextJudge() {
+        boolean judgeExists = false;
         for (int i = 0; i < players.size(); i++) {
             if (players.get(i).isJudge()) {
+                judgeExists = true;
                 players.get(i).setJudge(false);
                 if (i == players.size() - 1) {
                     players.get(0).setJudge(true);
@@ -185,9 +169,10 @@ public class GameState {
                     players.get(i + 1).setJudge(true);
                 }
                 break;
-            } else {
-                randomizeJudge();
             }
+        }
+        if (!judgeExists) {
+            randomizeJudge();
         }
     }
 
@@ -215,11 +200,16 @@ public class GameState {
 
     public Player getRoundWinner(RedApple winningRedApple) {
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
-            if (playerPlayedRedAppleModel.getRedApple().equals(winningRedApple)) {
+            if (playerPlayedRedAppleModel.getRedApple().getContent().equals(winningRedApple.getContent())) {
                 return getPlayerById(playerPlayedRedAppleModel.getPlayerId());
             }
         }
+        System.out.println("No round winner found");
         return null;
+    }
+
+    public void clearPlayersWhoSubmittedRedApples() {
+        submittedRedApplesModel.clear();
     }
 
     public void addGreenAppleToPlayer(Player player) {
@@ -235,10 +225,15 @@ public class GameState {
     public Player getGameWinner() {
         for (Player player : players) {
             if (player.getScore() == winningScore){
+                gameEnded = true;
                 return player;
             }
         }
         return null;
+    }
+
+    public boolean isGameEnded() {
+        return gameEnded;
     }
 
     public boolean playerThatPlayedRedApple(Player player) {
@@ -263,5 +258,46 @@ public class GameState {
 
     public void setAmountOfBots(int amountOfBots) {
         this.amountOfBots = amountOfBots;
+    }
+
+    public void printPlayerData() {
+        System.out.println();
+        System.out.println("PLAYER DATA:");
+        System.out.println("====================================");
+        for (Player player : players) {
+            System.out.println("Player: " + player.getName());
+            System.out.println("Player ID: " + player.getPlayerId());
+            System.out.println("Player Hand: ");
+            player.printHand();
+            System.out.println("Player Score: " + player.getScore());
+            System.out.println("Player Judge: " + player.isJudge());
+            System.out.println();
+        }
+        System.out.println("====================================");
+        System.out.println();
+    }
+
+    public void printSimplePlayerData() {
+        System.out.println();
+        System.out.println("PLAYER DATA:");
+        System.out.println("====================================");
+        for (Player player : players) {
+            System.out.println("Player: " + player.getName());
+            System.out.println("Player ID: " + player.getPlayerId());
+            System.out.println("Player Score: " + player.getScore());
+            System.out.println();
+        }
+        System.out.println("====================================");
+        System.out.println();
+    }
+
+    public void printCurrentPhaseData() {
+        System.out.println();
+        System.out.println("====================================");
+        System.out.println("Current Phase: " + phases.get(0).getClass().getSimpleName());
+        if (getJudge() != null) {
+            System.out.println("Current judge: " + getJudge().getName());
+        }
+        System.out.println("====================================");
     }
 }

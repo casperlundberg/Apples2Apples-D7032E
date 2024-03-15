@@ -4,9 +4,9 @@ import game.apples.GreenApple;
 import game.apples.RedApple;
 import java.net.Socket;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.Serializable;
 
 public class Player {
     private int playerId;
@@ -16,7 +16,7 @@ public class Player {
     private ArrayList<RedApple> hand;
     private final int MAX_HAND_SIZE = 7;
     private boolean isJudge;
-    private final boolean isBot;
+    private boolean isBot;
     private boolean playedRedApple; // can be used instead of playerPlayedAppleModel probably
 
     public Player(String name ) {
@@ -33,11 +33,16 @@ public class Player {
 
     // function that generates a unique player id for each player
     public void generatePlayerId() {
-        this.playerId = Math.abs(name.hashCode());
+        SecureRandom random = new SecureRandom();
+        this.playerId = random.nextInt();
     }
 
     public int getPlayerId() {
         return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public String getName() {
@@ -48,6 +53,10 @@ public class Player {
         return isBot;
     }
 
+    public void setIsBot(boolean isBot) {
+        this.isBot = isBot;
+    }
+
     public ArrayList<RedApple> drawRedAppleUntilFullHand(ArrayList<RedApple> redApples) {
         while (hand.size() < MAX_HAND_SIZE && !redApples.isEmpty()) {
             hand.add(redApples.remove(0));
@@ -55,11 +64,7 @@ public class Player {
         return redApples;
     }
 
-    public void playRedApple(RedApple redApple) {
-        if (isJudge) {
-            System.out.println("Judge cannot play red apple");
-            return;
-        }
+    public void removeRedApple(RedApple redApple) {
         hand.remove(redApple);
     }
 
@@ -88,7 +93,7 @@ public class Player {
     public RedApple chooseRedApple() {
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        return hand.remove(choice);
+        return hand.get(choice);
     }
 
     public void setJudge(boolean b) {

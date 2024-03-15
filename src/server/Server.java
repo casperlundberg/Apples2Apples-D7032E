@@ -1,14 +1,11 @@
 package server;
 
 import game.GameState;
-import game.apples.RedApple;
-import game.models.PlayerPlayedRedAppleModel;
 import game.phases.*;
 import game.players.Player;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,15 +20,21 @@ public class Server {
             // If all players have joined, start the game
             Phase currentPhase = gameState.getCurrentPhase();
             if (gameState.allPlayersJoined()) {
-                System.out.println("Current phase: " + currentPhase.getClass().getSimpleName());
-                gameState = currentPhase.execute(gameState);
+
+                gameState = currentPhase.executeOnServer(gameState);
+
+                if (gameState.isGameEnded()) {
+                    System.out.println("The game has ended");
+                    break;
+                }
 
                 gameState.nextPhase();
             } else {
                 // Accept new client and add the player to the game along with their socket
                 Socket socket = serverSocket.accept();
                 ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                Player player = (Player) inputStream.readObject();
+                String playerName = (String) inputStream.readObject();
+                Player player = new Player(playerName);
                 player.setSocket(socket);
 
                 System.out.println("New client connected on " + socket.getInetAddress() + ":" + socket.getPort() + " with username: " + player.getName());
