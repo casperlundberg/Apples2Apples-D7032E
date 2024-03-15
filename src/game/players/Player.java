@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.Serializable;
 
-public class Player implements Serializable {
+public class Player {
     private int playerId;
     private final String name;
-    private Socket socket;
+    private transient Socket socket;
     private final ArrayList<GreenApple> greenApplesWon;
     private ArrayList<RedApple> hand;
     private final int MAX_HAND_SIZE = 7;

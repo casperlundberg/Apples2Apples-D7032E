@@ -11,8 +11,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class JudgePhase extends Phase{
+public class JudgePhase extends Phase {
     ArrayList<PlayerPlayedRedAppleModel> redApplesPlayed;
+    int judgeIndex;
 
     /**
      * @param state  the game state
@@ -26,6 +27,10 @@ public class JudgePhase extends Phase{
 
 
         for (Player player : state.getPlayers()) {
+            if (player.isJudge()) {
+                judgeIndex = player.getPlayerId();
+            }
+
             super.notifyClient(player.getSocket());
 
             if (player.isJudge()) {
@@ -48,7 +53,9 @@ public class JudgePhase extends Phase{
     @Override
     public Player executeOnClient(Socket socket, Player player) throws IOException {
         // print the red apples played by the players
-        if (!player.isJudge()) {
+
+
+        if (player.getPlayerId() != judgeIndex) {
             System.out.println("You are not the judge, please wait for the judge to make a decision. The red apples played by the players are: ");
         } else {
             System.out.println("You are the judge, please select the red apple that you think is the best. The red apples played by the players are:");

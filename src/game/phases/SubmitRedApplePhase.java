@@ -53,11 +53,10 @@ public class SubmitRedApplePhase extends Phase {
                 e.printStackTrace();
             }
         }
-            // Shuffle the submitted playerPlayedRedApple models
+
+        // Shuffle the submitted playerPlayedRedApple models
         Collections.shuffle(state.getSubmittedRedAppleModel());
 
-
-        // all players have submitted red apples
         return state;
     }
 
@@ -74,11 +73,13 @@ public class SubmitRedApplePhase extends Phase {
             player.printHand();
             RedApple redApple = player.chooseRedApple();
 
-            PlayerPlayedRedAppleModel playRedApple = new PlayerPlayedRedAppleModel(player, redApple);
+            PlayerPlayedRedAppleModel playRedApple = new PlayerPlayedRedAppleModel(player.getPlayerId(), redApple);
 
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(playRedApple);
             outputStream.flush();
+        } else {
+            System.out.println("You are the JUDGE, please wait for the other players to submit their red apples");
         }
         return player;
     }

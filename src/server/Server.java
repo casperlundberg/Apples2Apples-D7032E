@@ -22,8 +22,8 @@ public class Server {
         while (true) {
             // If all players have joined, start the game
             Phase currentPhase = gameState.getCurrentPhase();
-            System.out.println("Current phase: " + currentPhase.getClass().getSimpleName());
             if (gameState.allPlayersJoined()) {
+                System.out.println("Current phase: " + currentPhase.getClass().getSimpleName());
                 gameState = currentPhase.execute(gameState);
 
                 gameState.nextPhase();

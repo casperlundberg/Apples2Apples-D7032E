@@ -2,6 +2,7 @@ package client;
 
 import game.GameState;
 import game.apples.GreenApple;
+import game.models.newPlayerModel;
 import game.phases.DrawGreenApplePhase;
 import game.phases.Phase;
 import game.phases.SubmitRedApplePhase;
@@ -24,9 +25,11 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your name: ");
         String playerName = scanner.nextLine();
-        Player player = new Player(playerName);
+        newPlayerModel playerModel = new newPlayerModel(playerName);
         outputStream = new ObjectOutputStream(socket.getOutputStream());
-        outputStream.writeObject(player);
+        outputStream.writeObject(playerModel);
+
+        Player player = new Player(playerName);
 
         while (true) {
             inputStream = new ObjectInputStream(socket.getInputStream());

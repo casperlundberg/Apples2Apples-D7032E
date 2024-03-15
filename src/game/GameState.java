@@ -100,6 +100,15 @@ public class GameState {
         return null;
     }
 
+    public Player getPlayerById(int id) {
+        for (Player player : players) {
+            if (player.getPlayerId() == id) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<Player> getPlayersWhoSubmittedRedApples() {
         return playersWhoSubmittedRedApples;
     }
@@ -207,7 +216,7 @@ public class GameState {
     public Player getRoundWinner(RedApple winningRedApple) {
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
             if (playerPlayedRedAppleModel.getRedApple().equals(winningRedApple)) {
-                return playerPlayedRedAppleModel.getPlayer();
+                return getPlayerById(playerPlayedRedAppleModel.getPlayerId());
             }
         }
         return null;
@@ -234,12 +243,11 @@ public class GameState {
 
     public boolean playerThatPlayedRedApple(Player player) {
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
-            if (playerPlayedRedAppleModel.getPlayer().equals(player)) {
+            if (getPlayerById(playerPlayedRedAppleModel.getPlayerId()).equals(player)) {
                 return true;
             }
         }
         return false;
-
     }
 
     public boolean allPlayersJoined() {

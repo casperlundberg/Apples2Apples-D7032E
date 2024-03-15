@@ -4,16 +4,16 @@ import game.players.Player;
 import java.io.Serializable;
 
 public class PlayerPlayedRedAppleModel implements Serializable {
-    private final Player player;
+    private final int playerId;
     private final RedApple redApple;
 
-    public PlayerPlayedRedAppleModel(Player player, RedApple redApple) {
-        this.player = player;
+    public PlayerPlayedRedAppleModel(int playerId, RedApple redApple) {
+        this.playerId = playerId;
         this.redApple = redApple;
     }
 
-    public Player getPlayer() {
-        return this.player;
+    public int getPlayerId() {
+        return this.playerId;
     }
 
     public RedApple getRedApple(){
