@@ -105,7 +105,6 @@ public class GameState {
                 return player;
             }
         }
-        System.out.println("Player not found");
         return null;
     }
 
@@ -139,8 +138,8 @@ public class GameState {
         submittedRedApplesModel.add(playerPlayedRedAppleModel);
         // remove played red apple from player's hand
         for (Player player : players) {
-            if (player.getPlayerId() == playerPlayedRedAppleModel.getPlayerId()) {
-                player.removeRedApple(playerPlayedRedAppleModel.getRedApple());
+            if (player.getPlayerId() == playerPlayedRedAppleModel.playerId()) {
+                player.removeRedApple(playerPlayedRedAppleModel.redApple());
             }
         }
     }
@@ -193,18 +192,21 @@ public class GameState {
     public ArrayList<RedApple> getRedApplesToBeJudged() {
         ArrayList<RedApple> redApples = new ArrayList<>();
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
-            redApples.add(playerPlayedRedAppleModel.getRedApple());
+            redApples.add(playerPlayedRedAppleModel.redApple());
         }
         return redApples;
     }
 
     public Player getRoundWinner(RedApple winningRedApple) {
+        System.out.println("\n*** ROUND WINNER ***");
+        System.out.println("The winning red apple is: " + winningRedApple.getContent());
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
-            if (playerPlayedRedAppleModel.getRedApple().getContent().equals(winningRedApple.getContent())) {
-                return getPlayerById(playerPlayedRedAppleModel.getPlayerId());
+            System.out.println("--------------------");
+            System.out.println("Player: " + playerPlayedRedAppleModel.playerId() + " played: " + playerPlayedRedAppleModel.redApple().getContent());
+            if (playerPlayedRedAppleModel.redApple().getContent().equals(winningRedApple.getContent())) {
+                return getPlayerById(playerPlayedRedAppleModel.playerId());
             }
         }
-        System.out.println("No round winner found");
         return null;
     }
 
@@ -224,7 +226,7 @@ public class GameState {
 
     public Player getGameWinner() {
         for (Player player : players) {
-            if (player.getScore() == winningScore){
+            if (player.getScore() >= winningScore){
                 gameEnded = true;
                 return player;
             }
@@ -238,7 +240,7 @@ public class GameState {
 
     public boolean playerThatPlayedRedApple(Player player) {
         for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {
-            if (getPlayerById(playerPlayedRedAppleModel.getPlayerId()).equals(player)) {
+            if (getPlayerById(playerPlayedRedAppleModel.playerId()).equals(player)) {
                 return true;
             }
         }
@@ -283,7 +285,7 @@ public class GameState {
         System.out.println("====================================");
         for (Player player : players) {
             System.out.println("Player: " + player.getName());
-            System.out.println("Player ID: " + player.getPlayerId());
+            System.out.println("Is Judge: " + player.isJudge());
             System.out.println("Player Score: " + player.getScore());
             System.out.println();
         }

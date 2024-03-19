@@ -28,13 +28,12 @@ public class ReplenishPlayersHandsPhase extends Phase {
     }
 
     /**
-     * @param socket the client's socket
      * @param player the current player
-     * @return
+     * @return the player
      * @throws IOException
      */
     @Override
-    public Player executeOnClient(Socket socket, Player player) throws IOException {
+    public Player executeOnClient(Player player) throws IOException {
         player.setHand(newHand);
         return player;
     }

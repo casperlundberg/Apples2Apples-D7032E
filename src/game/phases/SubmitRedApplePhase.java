@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class SubmitRedApplePhase extends Phase {
-    int judgeId;
 
     /**
      * Executes the phase on the server
@@ -40,7 +39,6 @@ public class SubmitRedApplePhase extends Phase {
 
                             System.out.println(player.getName() + " submitted a red apple"); // server side
                         } else {
-                            judgeId = state.getJudge().getPlayerId();
                             super.notifyClient(socket); // notify player that they are the judge
                         }
                 } catch (IOException | ClassNotFoundException e) {
@@ -68,25 +66,23 @@ public class SubmitRedApplePhase extends Phase {
 
     /**
      * Executes the phase on the client
-     *
-     * @param socket the socket to execute on
+     * @param player the player
      * @return the player
      */
     @Override
-    public Player executeOnClient(Socket socket, Player player) throws IOException {
-        if (player.getPlayerId() != judgeId) {
-            player.setJudge(false);
+    public Player executeOnClient(Player player) throws IOException {
+        if (player.isJudge()) {
+            System.out.println("You are the judge, please wait for the other players to submit their red apples");
+        } else {
             System.out.println("Choose a red apple to play: ");
             player.printHand();
-            RedApple redApple = player.chooseRedApple();
+            RedApple redApple = player.chooseRedApple(player.getHand());
 
             PlayerPlayedRedAppleModel playRedApple = new PlayerPlayedRedAppleModel(player.getPlayerId(), redApple);
 
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(player.getSocket().getOutputStream());
             outputStream.writeObject(playRedApple);
             outputStream.flush();
-        } else {
-            System.out.println("You are the judge, please wait for the other players to submit their red apples");
         }
 
         return player;

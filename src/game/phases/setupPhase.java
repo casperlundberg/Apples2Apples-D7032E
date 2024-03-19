@@ -11,7 +11,7 @@ public class setupPhase extends Phase {
     private ArrayList<RedApple> newHand;
     private int playerId;
     /**
-     * @param state  the game state
+     * @param state the game state
      * @throws IOException if an I/O error occurs
      */
     @Override
@@ -26,11 +26,11 @@ public class setupPhase extends Phase {
     }
 
     /**
-     * @param socket the socket to execute on
+     * @param player the player
      * @return the player
      */
     @Override
-    public Player executeOnClient(Socket socket, Player player) {
+    public Player executeOnClient(Player player) {
         player.setHand(newHand);
         player.setPlayerId(playerId);
         return player;

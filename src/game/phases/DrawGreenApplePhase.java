@@ -31,16 +31,18 @@ public class DrawGreenApplePhase extends Phase {
     }
 
     /**
-     * @param socket the socket to execute on
+     * Executes the phase on the client
+     * @param player clients player
      * @return the player
      */
     @Override
-    public Player executeOnClient(Socket socket, Player player) {
-        boolean isJudge = player.getPlayerId() == judgeId;
-        player.setJudge(isJudge);
+    public Player executeOnClient(Player player) {
+        player.setJudge(player.getPlayerId() == judgeId);
 
+
+        System.out.println();
         System.out.println("*****************************************************");
-        if (isJudge) {
+        if (player.isJudge()) {
             System.out.println("**                 NEW ROUND - JUDGE               **");
         } else {
             System.out.println("**                    NEW ROUND                    **");

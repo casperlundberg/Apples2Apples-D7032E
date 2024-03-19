@@ -34,10 +34,12 @@ public class JudgePhase extends Phase {
                 RedApple redApple = (RedApple) inputStream.readObject();
                 Player roundWinner = state.getRoundWinner(redApple);
 
-                System.out.println("The winning red apple is: " + redApple.getContent());
-
-                state.addGreenAppleToPlayer(roundWinner);
-                System.out.println("Judge's decision is made. The winner of this round is: " + roundWinner.getName());
+                if (roundWinner != null) {
+                    state.addGreenAppleToPlayer(roundWinner);
+                    System.out.println("Judge's decision is made. The winner of this round is: " + roundWinner.getName());
+                } else {
+                    System.out.println("No round winner found for the selected red apple.");
+                }
             }
         }
 
@@ -49,14 +51,13 @@ public class JudgePhase extends Phase {
     }
 
     /**
-     * Sends the current phase to the client
-     * @param socket the socket to notify
+     * Executes the phase on the client
      * @param player clients player
      * @throws IOException if an I/O error occurs
      * @return the player
      */
     @Override
-    public Player executeOnClient(Socket socket, Player player) throws IOException {
+    public Player executeOnClient(Player player) throws IOException {
         // print the red apples played by the players
 
         if (player.isJudge()) {
@@ -71,22 +72,9 @@ public class JudgePhase extends Phase {
         }
 
         if (player.isJudge()) {
-            // scanner to get the index of the red apple that the judge thinks is the best
-            boolean valid = false;
-            int index = 0;
-            while (!valid) {
-                Scanner scanner = new Scanner(System.in);
-                index = scanner.nextInt();
-                if (index >= 0 && index < redApplesPlayed.size()) {
-                    valid = true;
-                } else {
-                    System.out.println("Invalid index, please enter a valid index: ");
-                }
-            }
+            RedApple winningRedApple = player.chooseRedApple(redApplesPlayed);
 
-            RedApple winningRedApple = redApplesPlayed.get(index);
-
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream outputStream = new ObjectOutputStream(player.getSocket().getOutputStream());
             outputStream.writeObject(winningRedApple);
             outputStream.flush();
         }

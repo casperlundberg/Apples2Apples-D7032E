@@ -28,14 +28,13 @@ public abstract class Phase implements Serializable {
 
     /**
      * This method is used to execute the current phase on the client side.
-     * It takes the client's socket and player as parameters and returns the updated player after executing the phase.
+     * It takes the client's player as parameter and returns the updated player after executing the phase.
      *
-     * @param socket the client's socket
      * @param player the current player
      * @return the updated player after executing the phase
      * @throws IOException if an I/O error occurs
      */
-    public abstract Player executeOnClient(Socket socket, Player player) throws IOException;
+    public abstract Player executeOnClient(Player player) throws IOException;
 
     /**
      * This method is used to notify the client about the current phase.
