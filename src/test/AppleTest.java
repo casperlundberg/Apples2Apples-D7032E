@@ -1,9 +1,8 @@
 package test;
 
 import game.apples.Apple;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class AppleTest {
     @Test
@@ -11,6 +10,6 @@ public class AppleTest {
         String expectedContent = "Test Content";
         Apple apple = new Apple(expectedContent);
         String actualContent = apple.getContent();
-        assertEquals(expectedContent, actualContent, "Content of the apple does not match the expected content");
+        assertEquals(expectedContent, actualContent);
     }
 }
