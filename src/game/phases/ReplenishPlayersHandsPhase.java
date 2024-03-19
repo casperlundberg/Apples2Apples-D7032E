@@ -5,7 +5,6 @@ import game.apples.RedApple;
 import game.players.Player;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class ReplenishPlayersHandsPhase extends Phase {
@@ -14,11 +13,9 @@ public class ReplenishPlayersHandsPhase extends Phase {
     /**
      * @param state the current game state
      * @return the game state
-     * @throws IOException
-     * @throws ClassNotFoundException
      */
     @Override
-    public GameState executeOnServer(GameState state) throws IOException, ClassNotFoundException {
+    public GameState executeOnServer(GameState state) throws IOException {
         state.fillPlayersHands();
         for (Player player : state.getPlayers()) {
             newHand = player.getHand();
@@ -30,10 +27,9 @@ public class ReplenishPlayersHandsPhase extends Phase {
     /**
      * @param player the current player
      * @return the player
-     * @throws IOException
      */
     @Override
-    public Player executeOnClient(Player player) throws IOException {
+    public Player executeOnClient(Player player) {
         player.setHand(newHand);
         return player;
     }

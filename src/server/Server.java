@@ -11,34 +11,35 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        ServerSocket serverSocket = new ServerSocket(8080);
-        System.out.println("Server is listening on port 8080");
+        try (ServerSocket serverSocket = new ServerSocket(8080)) {
+            System.out.println("Server is listening on port 8080");
 
-        GameState gameState = new GameState();
+            GameState gameState = new GameState();
 
-        while (true) {
-            // If all players have joined, start the game
-            Phase currentPhase = gameState.getCurrentPhase();
-            if (gameState.allPlayersJoined()) {
+            while (true) {
+                // If all players have joined, start the game
+                Phase currentPhase = gameState.getCurrentPhase();
+                if (gameState.allPlayersJoined()) {
 
-                gameState = currentPhase.executeOnServer(gameState);
+                    gameState = currentPhase.executeOnServer(gameState);
 
-                if (gameState.isGameEnded()) {
-                    System.out.println("The game has ended");
-                    break;
+                    if (gameState.isGameEnded()) {
+                        System.out.println("The game has ended");
+                        break;
+                    }
+
+                    gameState.nextPhase();
+                } else {
+                    // Accept new client and add the player to the game along with their socket
+                    Socket socket = serverSocket.accept();
+                    ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                    String playerName = (String) inputStream.readObject();
+                    Player player = new Player(playerName);
+                    player.setSocket(socket);
+
+                    System.out.println("New client connected on " + socket.getInetAddress() + ":" + socket.getPort() + " with username: " + player.getName());
+                    gameState.addPlayer(player);
                 }
-
-                gameState.nextPhase();
-            } else {
-                // Accept new client and add the player to the game along with their socket
-                Socket socket = serverSocket.accept();
-                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
-                String playerName = (String) inputStream.readObject();
-                Player player = new Player(playerName);
-                player.setSocket(socket);
-
-                System.out.println("New client connected on " + socket.getInetAddress() + ":" + socket.getPort() + " with username: " + player.getName());
-                gameState.addPlayer(player);
             }
         }
     }

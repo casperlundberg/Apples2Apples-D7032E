@@ -2,11 +2,12 @@ package client;
 
 import game.phases.Phase;
 import game.players.Player;
+import handlers.InputHandler;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -17,16 +18,8 @@ public class Client {
         socket = new Socket("localhost", 8080);
         System.out.println("Connected to the server");
 
-        Scanner scanner = new Scanner(System.in);
-
-        String playerName;
-        do {
-            System.out.println("Enter your name: ");
-            playerName = scanner.nextLine().trim();
-            if (playerName.isEmpty()) {
-                System.out.println("Name cannot be empty. Please enter a valid name.");
-            }
-        } while (playerName.isEmpty());
+        InputHandler inputHandler = new InputHandler();
+        String playerName = inputHandler.getPlayerNameInput();
 
         outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.writeObject(playerName);
@@ -41,7 +34,5 @@ public class Client {
             player = currentPhase.executeOnClient(player);
 
         } while (!player.getDonePlaying());
-
-        scanner.close();
     }
 }

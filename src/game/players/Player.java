@@ -6,7 +6,6 @@ import java.net.Socket;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * This class represents a Player in the game.
@@ -18,7 +17,7 @@ public class Player {
     private transient Socket socket;
     private final ArrayList<GreenApple> greenApplesWon;
     private ArrayList<RedApple> hand;
-    private final int MAX_HAND_SIZE = 7;
+    private final int MAX_HAND_SIZE;
     private boolean isJudge;
     private boolean isBot;
     private boolean donePlaying = false;
@@ -42,6 +41,7 @@ public class Player {
         this.hand = new ArrayList<>();
         this.greenApplesWon = new ArrayList<>();
         generatePlayerId();
+        MAX_HAND_SIZE = 7;
     }
 
     /**
@@ -55,6 +55,7 @@ public class Player {
         this.hand = new ArrayList<>();
         this.greenApplesWon = new ArrayList<>();
         this.socket = socket;
+        MAX_HAND_SIZE = 7;
     }
 
     /**
@@ -96,10 +97,10 @@ public class Player {
 
     /**
      * Sets if the player is a bot.
-     * @param isBot The boolean to set.
+     * @param b The boolean to set.
      */
-    public void setIsBot(boolean isBot) {
-        this.isBot = isBot;
+    public void setBot(boolean b) {
+        isBot = b;
     }
 
     /**
@@ -164,42 +165,6 @@ public class Player {
      */
     public void setHand(ArrayList<RedApple> hand) {
         this.hand = hand;
-    }
-
-    /**
-     * Choose a RedApple from the given list of RedApple cards.
-     * Currently, in use for players to choose from hand and judge from the played red apples.
-     * If the player is a bot, a random RedApple is chosen.
-     * @param redApples The list of RedApple cards to choose from.
-     * @return The chosen RedApple card.
-     */
-    public RedApple chooseRedApple(ArrayList<RedApple> redApples) {
-        // If the player is a bot, choose a random red apple
-        if (isBot) {
-            return redApples.get(new SecureRandom().nextInt(redApples.size()));
-        }
-
-        Scanner scanner = new Scanner(System.in);
-        boolean valid = false;
-        int choice = 0;
-        while (!valid) {
-            if (scanner.hasNextInt()) {
-                choice = scanner.nextInt();
-                if (choice >= 0 && choice < redApples.size()) {
-                    valid = true;
-                    System.out.println("You chose: " + redApples.get(choice).getContent());
-                } else {
-                    System.out.println("Invalid index, please enter a valid index: ");
-                    scanner.nextLine(); // clear scanner buffer so the next input can be read
-                }
-            } else {
-                System.out.println("No input available. Please enter an integer.");
-                scanner.nextLine(); // clear scanner buffer so the next input can be read
-            }
-        }
-
-        // Do not close the scanner here if it's System.in as it will close System.in as well
-        return redApples.get(choice);
     }
 
     /**

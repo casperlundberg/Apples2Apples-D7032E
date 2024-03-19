@@ -21,7 +21,7 @@ public class GameState {
     private ArrayList<GreenApple> greenAppleDeck;
     private ArrayList<RedApple> redAppleDeck;
     private ArrayList<Phase> phases;
-    private ArrayList<PlayerPlayedRedAppleModel> submittedRedApplesModel; // Because we need to keep track of who played what red apple
+    private final ArrayList<PlayerPlayedRedAppleModel> submittedRedApplesModel; // Because we need to keep track of who played what red apple
 
     public GameState() {
         this.players = new ArrayList<>();
@@ -60,7 +60,7 @@ public class GameState {
                 this.greenAppleDeck.add(new GreenApple(line));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error occurred while loading green apples");
         }
         Collections.shuffle(this.greenAppleDeck);
     }
@@ -72,7 +72,7 @@ public class GameState {
                 this.redAppleDeck.add(new RedApple(line));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error occurred while loading red apples");
         }
         Collections.shuffle(this.redAppleDeck);
     }
@@ -86,19 +86,6 @@ public class GameState {
         players.add(player);
     }
 
-    public void removePlayer(Player player) {
-        players.remove(player);
-    }
-
-    public Player getPlayerByName(String name) {
-        for (Player player : players) {
-            if (player.getName().equals(name)) {
-                return player;
-            }
-        }
-        return null;
-    }
-
     public Player getPlayerById(int id) {
         for (Player player : players) {
             if (player.getPlayerId() == id) {
@@ -106,14 +93,6 @@ public class GameState {
             }
         }
         return null;
-    }
-
-    public ArrayList<GreenApple> getGreenAppleDeck() {
-        return greenAppleDeck;
-    }
-
-    public ArrayList<RedApple> getRedAppleDeck() {
-        return redAppleDeck;
     }
 
     public GreenApple getCurrentGreenApple() {
@@ -277,29 +256,5 @@ public class GameState {
         }
         System.out.println("====================================");
         System.out.println();
-    }
-
-    public void printSimplePlayerData() {
-        System.out.println();
-        System.out.println("PLAYER DATA:");
-        System.out.println("====================================");
-        for (Player player : players) {
-            System.out.println("Player: " + player.getName());
-            System.out.println("Is Judge: " + player.isJudge());
-            System.out.println("Player Score: " + player.getScore());
-            System.out.println();
-        }
-        System.out.println("====================================");
-        System.out.println();
-    }
-
-    public void printCurrentPhaseData() {
-        System.out.println();
-        System.out.println("====================================");
-        System.out.println("Current Phase: " + phases.get(0).getClass().getSimpleName());
-        if (getJudge() != null) {
-            System.out.println("Current judge: " + getJudge().getName());
-        }
-        System.out.println("====================================");
     }
 }

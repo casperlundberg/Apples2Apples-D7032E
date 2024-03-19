@@ -8,13 +8,17 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class InputHandler {
+    private final Scanner scanner;
+
+    public InputHandler() {
+        this.scanner = new Scanner(System.in);
+    }
     public RedApple chooseRedApple(Player player, ArrayList<RedApple> redApples) {
         // If the player is a bot, choose a random red apple
         if (player.isBot()) {
             return redApples.get(new SecureRandom().nextInt(redApples.size()));
         }
 
-        Scanner scanner = new Scanner(System.in);
         boolean valid = false;
         int choice = 0;
         while (!valid) {
@@ -35,5 +39,18 @@ public class InputHandler {
 
         // Do not close the scanner here if it's System.in as it will close System.in as well
         return redApples.get(choice);
+    }
+
+    public String getPlayerNameInput() {
+        String playerName;
+        do {
+            System.out.println("Enter your name: ");
+            playerName = scanner.nextLine();
+
+            if (playerName.isEmpty()) {
+                System.out.println("Name cannot be empty. Please enter a valid name.");
+            }
+        } while (playerName.isEmpty());
+        return playerName;
     }
 }

@@ -1,15 +1,13 @@
 package game.phases;
 import game.apples.RedApple;
-import game.models.PlayerPlayedRedAppleModel;
 import game.players.Player;
 import game.GameState;
+import handlers.InputHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class JudgePhase extends Phase {
     ArrayList<RedApple> redApplesPlayed;
@@ -72,7 +70,8 @@ public class JudgePhase extends Phase {
         }
 
         if (player.isJudge()) {
-            RedApple winningRedApple = player.chooseRedApple(redApplesPlayed);
+            InputHandler inputHandler = new InputHandler();
+            RedApple winningRedApple = inputHandler.chooseRedApple(player, redApplesPlayed);
 
             ObjectOutputStream outputStream = new ObjectOutputStream(player.getSocket().getOutputStream());
             outputStream.writeObject(winningRedApple);

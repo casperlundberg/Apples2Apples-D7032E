@@ -4,6 +4,8 @@ import game.GameState;
 import game.apples.RedApple;
 import game.players.Player;
 import game.models.PlayerPlayedRedAppleModel;
+import handlers.InputHandler;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,10 +19,9 @@ public class SubmitRedApplePhase extends Phase {
     /**
      * Executes the phase on the server
      * @param state  the game state
-     * @throws IOException
      */
     @Override
-    public GameState executeOnServer(GameState state) throws IOException, ClassNotFoundException {
+    public GameState executeOnServer(GameState state) {
 
         List<Thread> threads = new ArrayList<>();
         for (Player player : state.getPlayers()) {
@@ -42,7 +43,7 @@ public class SubmitRedApplePhase extends Phase {
                             super.notifyClient(socket); // notify player that they are the judge
                         }
                 } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                    System.out.println("Error occurred while waiting for " + player.getName() + " to submit a red apple");
                 }
             });
             threads.add(thread);
@@ -54,7 +55,7 @@ public class SubmitRedApplePhase extends Phase {
             try {
                 thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Thread interrupted");
             }
         }
 
@@ -76,7 +77,9 @@ public class SubmitRedApplePhase extends Phase {
         } else {
             System.out.println("Choose a red apple to play: ");
             player.printHand();
-            RedApple redApple = player.chooseRedApple(player.getHand());
+
+            InputHandler inputHandler = new InputHandler();
+            RedApple redApple = inputHandler.chooseRedApple(player, player.getHand());
 
             PlayerPlayedRedAppleModel playRedApple = new PlayerPlayedRedAppleModel(player.getPlayerId(), redApple);
 

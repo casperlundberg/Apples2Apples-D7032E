@@ -4,7 +4,6 @@ import game.GameState;
 import game.apples.RedApple;
 import game.players.Player;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class setupPhase extends Phase {
