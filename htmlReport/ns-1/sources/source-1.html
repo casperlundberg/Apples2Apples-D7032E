@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Client</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">client</a>
+</div>
+
+<h1>Coverage Summary for Class: Client (client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Client</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package client;
+&nbsp;
+&nbsp;import game.phases.Phase;
+&nbsp;import game.player.Player;
+&nbsp;import handlers.InputHandler;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.net.Socket;
+&nbsp;
+<b class="nc">&nbsp;public class Client {</b>
+&nbsp;    public static void main(String[] args) throws IOException, ClassNotFoundException {
+&nbsp;        Socket socket;
+&nbsp;        ObjectInputStream inputStream;
+&nbsp;        ObjectOutputStream outputStream;
+&nbsp;
+<b class="nc">&nbsp;        socket = new Socket(&quot;localhost&quot;, 8080);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;Connected to the server&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        InputHandler inputHandler = new InputHandler();</b>
+<b class="nc">&nbsp;        String playerName = inputHandler.getPlayerNameInput();</b>
+&nbsp;
+<b class="nc">&nbsp;        outputStream = new ObjectOutputStream(socket.getOutputStream());</b>
+<b class="nc">&nbsp;        outputStream.writeObject(playerName);</b>
+&nbsp;
+<b class="nc">&nbsp;        Player player = new Player(playerName, socket);</b>
+&nbsp;
+&nbsp;        do {
+<b class="nc">&nbsp;            inputStream = new ObjectInputStream(socket.getInputStream());</b>
+<b class="nc">&nbsp;            Phase currentPhase = (Phase) inputStream.readObject();</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Current phase: &quot; + currentPhase.getClass().getSimpleName());</b>
+&nbsp;
+<b class="nc">&nbsp;            player = currentPhase.executeOnClient(player);</b>
+&nbsp;
+<b class="nc">&nbsp;        } while (!player.getDonePlaying());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

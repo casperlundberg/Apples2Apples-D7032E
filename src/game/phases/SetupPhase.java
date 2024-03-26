@@ -2,11 +2,11 @@ package game.phases;
 
 import game.GameState;
 import game.apples.RedApple;
-import game.players.Player;
+import game.player.Player;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class setupPhase extends Phase {
+public class SetupPhase extends Phase {
     private ArrayList<RedApple> newHand;
     private int playerId;
     /**
@@ -15,13 +15,27 @@ public class setupPhase extends Phase {
      */
     @Override
     public GameState executeOnServer(GameState state) throws IOException {
-        state.fillPlayersHands();
+        state = fillPlayersHands(state);
+
         for (Player player : state.getPlayers()) {
-            newHand = player.getHand();
-            playerId = player.getPlayerId();
+            setNewHand(player.getHand());
+            setPlayerId(player.getPlayerId());
             super.notifyClient(player.getSocket());
         }
         return state;
+    }
+
+    public GameState fillPlayersHands(GameState state) {
+        state.fillPlayersHands();
+        return state;
+    }
+
+    public void setNewHand(ArrayList<RedApple> newHand) {
+        this.newHand = newHand;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     /**

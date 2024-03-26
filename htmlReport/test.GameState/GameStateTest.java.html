@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="sv"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameStateTest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test in D7032E-Apples2Apples Coverage Results</a> &gt; <a href="index.source.html" class="el_package">test.GameState</a> &gt; <span class="el_source">GameStateTest.java</span></div><h1>GameStateTest.java</h1><pre class="source lang-java linenums">package test.GameState;
+
+import game.GameState;
+import game.apples.RedApple;
+import game.models.PlayerPlayedRedAppleModel;
+import game.phases.DrawGreenApplePhase;
+import game.phases.SetupPhase;
+import game.player.Player;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+<span class="fc" id="L14">public class GameStateTest {</span>
+
+    @Test
+    public void testGameState() {
+<span class="fc" id="L18">        GameState state = new GameState();</span>
+<span class="fc" id="L19">        assertNotNull(state);</span>
+<span class="fc" id="L20">    }</span>
+
+    @Test
+    public void testGetPlayers() {
+<span class="fc" id="L24">        GameState state = new GameState();</span>
+<span class="fc" id="L25">        state.addPlayer(new Player(&quot;Player 1&quot;));</span>
+<span class="fc" id="L26">        state.addPlayer(new Player(&quot;Player 2&quot;));</span>
+<span class="fc" id="L27">        assertEquals(2, state.getPlayers().size());</span>
+<span class="fc" id="L28">    }</span>
+
+    @Test
+    public void testGetPlayerById() {
+<span class="fc" id="L32">        GameState state = new GameState();</span>
+<span class="fc" id="L33">        Player player = new Player(&quot;Player 1&quot;);</span>
+<span class="fc" id="L34">        state.addPlayer(player);</span>
+<span class="fc" id="L35">        assertEquals(player, state.getPlayerById(player.getPlayerId()));</span>
+<span class="fc" id="L36">    }</span>
+
+    @Test
+    public void testGetPlayerByIdWithInvalidId() {
+<span class="fc" id="L40">        GameState state = new GameState();</span>
+<span class="fc" id="L41">        assertNull(state.getPlayerById(1));</span>
+<span class="fc" id="L42">    }</span>
+
+    @Test
+    public void testGetCurrentGreenApple() {
+<span class="fc" id="L46">        GameState state = new GameState();</span>
+<span class="fc" id="L47">        assertNotNull(state.getCurrentGreenApple());</span>
+<span class="fc" id="L48">    }</span>
+
+    @Test
+    public void testFillPlayersHands() {
+<span class="fc" id="L52">        GameState state = new GameState();</span>
+<span class="fc" id="L53">        state.addPlayer(new Player(&quot;Player 1&quot;));</span>
+<span class="fc" id="L54">        state.addPlayer(new Player(&quot;Player 2&quot;));</span>
+<span class="fc" id="L55">        state.fillPlayersHands();</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        for (Player player : state.getPlayers()) {</span>
+<span class="fc" id="L57">            assertEquals(7, player.getHand().size());</span>
+<span class="fc" id="L58">        }</span>
+<span class="fc" id="L59">    }</span>
+
+    @Test
+    public void testSubmittedRedAppleModel() {
+<span class="fc" id="L63">        GameState state = new GameState();</span>
+
+<span class="fc" id="L65">        Player player = new Player(&quot;Player 1&quot;);</span>
+<span class="fc" id="L66">        player.setPlayerId(1);</span>
+<span class="fc" id="L67">        state.addPlayer(player);</span>
+
+<span class="fc" id="L69">        RedApple toBeSubmitted = player.getHand().get(0);</span>
+
+<span class="fc" id="L71">        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L72">        redApples.add(toBeSubmitted);</span>
+
+<span class="fc" id="L74">        PlayerPlayedRedAppleModel model = new PlayerPlayedRedAppleModel(player.getPlayerId(), toBeSubmitted);</span>
+<span class="fc" id="L75">        state.PlayerPlayedRedApple(model);</span>
+
+        // current hand size is 7 in Gamestate.java Constants
+<span class="fc" id="L78">        assertEquals(6, player.getHand().size());</span>
+<span class="fc" id="L79">        assertEquals(1, state.getSubmittedRedAppleModel().size());</span>
+
+        // check that the red apples shown to judge is the same as the submitted red apples
+<span class="fc" id="L82">        assertEquals(redApples, state.getRedApplesToBeJudged());</span>
+
+        // check that the round winner is not null, aka found in gamestate
+<span class="fc" id="L85">        Player roundWinner = state.getRoundWinner(toBeSubmitted);</span>
+<span class="fc" id="L86">        assertNotNull(roundWinner);</span>
+<span class="fc" id="L87">    }</span>
+
+    @Test
+    public void testCurrentPhase() {
+<span class="fc" id="L91">        GameState state = new GameState();</span>
+<span class="fc" id="L92">        assertNotNull(state.getCurrentPhase());</span>
+<span class="fc" id="L93">        assertInstanceOf(SetupPhase.class, state.getCurrentPhase());</span>
+<span class="fc" id="L94">    }</span>
+
+    @Test
+    public void testNextPhase() {
+<span class="fc" id="L98">        GameState state = new GameState();</span>
+<span class="fc" id="L99">        state.nextPhase();</span>
+<span class="fc" id="L100">        assertNotNull(state.getCurrentPhase());</span>
+<span class="fc" id="L101">        assertInstanceOf(DrawGreenApplePhase.class, state.getCurrentPhase());</span>
+<span class="fc" id="L102">    }</span>
+
+    @Test
+    public void testNextJudge() {
+<span class="fc" id="L106">        GameState state = new GameState();</span>
+<span class="fc" id="L107">        Player player = new Player(&quot;Player 1&quot;);</span>
+<span class="fc" id="L108">        player.setPlayerId(1);</span>
+<span class="fc" id="L109">        Player player2 = new Player(&quot;Player 2&quot;);</span>
+<span class="fc" id="L110">        player.setPlayerId(2);</span>
+<span class="fc" id="L111">        state.addPlayer(player);</span>
+
+
+<span class="fc" id="L114">        state.nextJudge();</span>
+<span class="fc" id="L115">        assertNotNull(state.getJudge());</span>
+<span class="fc" id="L116">        assertEquals(player, state.getJudge());</span>
+
+<span class="fc" id="L118">        state.addPlayer(player2);</span>
+
+        // since first player is made judge before player2 is added we know that player2 will be judge when a new one is selected
+<span class="fc" id="L121">        state.nextJudge();</span>
+<span class="fc" id="L122">        assertNotNull(state.getJudge());</span>
+<span class="fc" id="L123">        assertEquals(player2, state.getJudge());</span>
+<span class="fc" id="L124">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

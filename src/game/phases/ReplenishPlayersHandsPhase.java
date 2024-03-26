@@ -2,7 +2,7 @@ package game.phases;
 
 import game.GameState;
 import game.apples.RedApple;
-import game.players.Player;
+import game.player.Player;
 
 import java.io.IOException;
 import java.util.ArrayList;

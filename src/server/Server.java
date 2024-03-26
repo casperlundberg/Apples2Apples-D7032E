@@ -2,7 +2,8 @@ package server;
 
 import game.GameState;
 import game.phases.*;
-import game.players.Player;
+import game.player.Player;
+import handlers.InputHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +17,15 @@ public class Server {
 
             GameState gameState = new GameState();
 
+            // Set the amount of players and bots
+            InputHandler inputHandler = new InputHandler();
+            int amountPlayers = inputHandler.getNumberOfPlayers();
+            int amountBots = inputHandler.getNumberOfBots();
+            gameState.setAmountOfBots(amountBots);
+            gameState.setAmountOfHumanPlayers(amountPlayers);
+            gameState.setupScoring();
+
+            // Start the game loop
             while (true) {
                 // If all players have joined, start the game
                 Phase currentPhase = gameState.getCurrentPhase();
@@ -30,6 +40,7 @@ public class Server {
 
                     gameState.nextPhase();
                 } else {
+                    // Game not started yet
                     // Accept new client and add the player to the game along with their socket
                     Socket socket = serverSocket.accept();
                     ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());

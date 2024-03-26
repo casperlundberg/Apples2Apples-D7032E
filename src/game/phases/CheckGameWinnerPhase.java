@@ -1,27 +1,43 @@
 package game.phases;
 
 import game.GameState;
-import game.players.Player;
+import game.player.Player;
 
 import java.io.IOException;
 
-public class checkGameWinnerPhase extends Phase {
+public class CheckGameWinnerPhase extends Phase {
     boolean gameEnded = false;
     String winnerName;
     int winnerId;
 
     @Override
     public GameState executeOnServer(GameState state) throws IOException {
-        Player gameWinner = state.getGameWinner(); // currently must be the round winner or null cuz only rounds give points
+        Player gameWinner = getGameWinner(state); // currently must be the round winner or null cuz only rounds give points
         for (Player player : state.getPlayers()) {
             if (gameWinner != null) {
-                this.gameEnded = true;
-                this.winnerName = gameWinner.getName();
-                this.winnerId = gameWinner.getPlayerId();
+                setGameEnded(true);
+                setWinnerName(gameWinner.getName());
+                setWinnerId(gameWinner.getPlayerId());
                 super.notifyClient(player.getSocket());
             }
         }
         return state;
+    }
+
+    public Player getGameWinner(GameState state) {
+        return state.getGameWinner();
+    }
+
+    public void setGameEnded(boolean gameEnded) {
+        this.gameEnded = gameEnded;
+    }
+
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
+    }
+
+    public void setWinnerId(int winnerId) {
+        this.winnerId = winnerId;
     }
 
     @Override

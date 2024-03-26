@@ -1,0 +1,163 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > JudgePhaseTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: JudgePhaseTest (test.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JudgePhaseTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.phases;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.phases.JudgePhase;
+&nbsp;import game.player.Player;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;public class JudgePhaseTest {</b>
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testExecuteOnClient() throws IOException {
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        JudgePhase judgePhase = new JudgePhase();</b>
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        redApples.add(new RedApple(&quot;Red Apple 1&quot;));</b>
+<b class="fc">&nbsp;        judgePhase.setRedApplesPlayed(redApples);</b>
+&nbsp;
+<b class="fc">&nbsp;        player = judgePhase.executeOnClient(player);</b>
+<b class="fc">&nbsp;        assertNotNull(player);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testScoreUp() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+&nbsp;
+<b class="fc">&nbsp;        JudgePhase judgePhase = new JudgePhase();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        state = judgePhase.scoreUp(player, state);</b>
+<b class="fc">&nbsp;        assertEquals(1, state.getPlayerById(player.getPlayerId()).getScore());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testInvalidScoreUp() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+&nbsp;
+<b class="fc">&nbsp;        JudgePhase judgePhase = new JudgePhase();</b>
+&nbsp;
+<b class="fc">&nbsp;        state = judgePhase.scoreUp(null, state);</b>
+<b class="fc">&nbsp;        assertNotNull(state);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPrintJudgeInfo() {
+<b class="fc">&nbsp;        JudgePhase judgePhase = new JudgePhase();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        player.setJudge(true);</b>
+&nbsp;
+<b class="fc">&nbsp;        judgePhase.printJudgeInfo(player);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

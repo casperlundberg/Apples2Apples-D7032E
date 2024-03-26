@@ -1,0 +1,150 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > DrawGreenApplesPhaseTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: DrawGreenApplesPhaseTest (test.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DrawGreenApplesPhaseTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.phases;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.phases.DrawGreenApplePhase;
+&nbsp;import game.player.Player;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertFalse;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertTrue;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;public class DrawGreenApplesPhaseTest {</b>
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testExecuteOnClientAsJudge() {
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        DrawGreenApplePhase drawGreenApplePhase = new DrawGreenApplePhase();</b>
+<b class="fc">&nbsp;        drawGreenApplePhase.nextJudge(state);</b>
+<b class="fc">&nbsp;        drawGreenApplePhase.nextGreenApple(state);</b>
+&nbsp;
+<b class="fc">&nbsp;        player = drawGreenApplePhase.executeOnClient(player);</b>
+<b class="fc">&nbsp;        assertTrue(player.isJudge());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testExecuteOnClientAsNotJudge() {
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        Player player2 = new Player(&quot;Player 2&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        DrawGreenApplePhase drawGreenApplePhase = new DrawGreenApplePhase();</b>
+<b class="fc">&nbsp;        drawGreenApplePhase.nextJudge(state);</b>
+<b class="fc">&nbsp;        drawGreenApplePhase.nextGreenApple(state);</b>
+&nbsp;
+<b class="fc">&nbsp;        state.addPlayer(player2);</b>
+&nbsp;
+<b class="fc">&nbsp;        player2 = drawGreenApplePhase.executeOnClient(player2);</b>
+<b class="fc">&nbsp;        assertFalse(player2.isJudge());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

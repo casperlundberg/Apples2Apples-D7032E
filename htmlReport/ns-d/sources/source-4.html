@@ -1,0 +1,160 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > SetupPhaseTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: SetupPhaseTest (test.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SetupPhaseTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (23/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.phases;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.phases.SetupPhase;
+&nbsp;import game.player.Player;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertNotNull;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertNull;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertEquals;
+&nbsp;
+<b class="fc">&nbsp;public class SetupPhaseTest {</b>
+&nbsp;    @Test
+&nbsp;    public void testExecuteOnClientWithNullHand() {
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        SetupPhase setupPhase = new SetupPhase();</b>
+&nbsp;
+<b class="fc">&nbsp;        player = setupPhase.executeOnClient(player);</b>
+<b class="fc">&nbsp;        assertNull(player.getHand());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testExecuteOnClientWithHand() {
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; hand = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 5; i++) {</b>
+<b class="fc">&nbsp;            hand.add(new RedApple(&quot;Red Apple &quot; + i));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        SetupPhase setupPhase = new SetupPhase();</b>
+<b class="fc">&nbsp;        setupPhase.setNewHand(hand);</b>
+<b class="fc">&nbsp;        setupPhase.setPlayerId(1);</b>
+&nbsp;
+<b class="fc">&nbsp;        player = setupPhase.executeOnClient(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(hand, player.getHand());</b>
+<b class="fc">&nbsp;        assertEquals(player.getPlayerId(), 1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testFillPlayersHands() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 2&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        SetupPhase setupPhase = new SetupPhase();</b>
+<b class="fc">&nbsp;        state = setupPhase.fillPlayersHands(state);</b>
+<b class="fc">&nbsp;        for (Player player : state.getPlayers()) {</b>
+<b class="fc">&nbsp;            assertNotNull(player.getHand());</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

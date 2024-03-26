@@ -1,9 +1,10 @@
 package game;
 
 import game.models.PlayerPlayedRedAppleModel;
-import game.players.Player;
+import game.player.Player;
 import game.apples.*;
 import game.phases.*;
+import handlers.InputHandler;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,20 +30,19 @@ public class GameState {
         loadGreenApples();
         loadRedApples();
         setupPhases();
-        setupScoring();
     }
 
     private void setupPhases() {
         this.phases = new ArrayList<>();
-        this.phases.add(new setupPhase());
+        this.phases.add(new SetupPhase());
         this.phases.add(new DrawGreenApplePhase());
         this.phases.add(new SubmitRedApplePhase());
         this.phases.add(new JudgePhase());
-        this.phases.add(new checkGameWinnerPhase());
+        this.phases.add(new CheckGameWinnerPhase());
         this.phases.add(new ReplenishPlayersHandsPhase());
     }
 
-    private void setupScoring() {
+    public void setupScoring() {
         int playersAndBots = amountOfHumanPlayers + amountOfBots;
         if (playersAndBots >= 8) {
             winningScore = 4;
@@ -77,13 +77,13 @@ public class GameState {
         Collections.shuffle(this.redAppleDeck);
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
     public void addPlayer(Player player) {
         player.drawRedAppleUntilFullHand(redAppleDeck);
         players.add(player);
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
     }
 
     public Player getPlayerById(int id) {
@@ -128,7 +128,7 @@ public class GameState {
     }
 
     public void nextPhase() {
-        if (phases.get(0) instanceof setupPhase) {
+        if (phases.get(0) instanceof SetupPhase) {
             phases.remove(0);
         } else {
             phases.add(phases.remove(0));
@@ -235,10 +235,28 @@ public class GameState {
 
     public void setAmountOfHumanPlayers(int amountOfHumanPlayers) {
         this.amountOfHumanPlayers = amountOfHumanPlayers;
+        fillBotsIfNeeded();
     }
 
     public void setAmountOfBots(int amountOfBots) {
         this.amountOfBots = amountOfBots;
+        fillBotsIfNeeded();
+    }
+
+    private void fillBotsIfNeeded() {
+        if (amountOfHumanPlayers + amountOfBots < 4) {
+            amountOfBots = MIN_PLAYERS_AND_BOTS_COMBINED - amountOfHumanPlayers;
+        }
+    }
+
+    public void addBots() {
+        for (int i = 1; i <= amountOfBots; i++) {
+            if (allPlayersJoined()) {
+                break;
+            } else {
+                addPlayer(new Player("Bot " + (players.size()+1), true));
+            }
+        }
     }
 
     public void printPlayerData() {

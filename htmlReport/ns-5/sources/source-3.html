@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > JudgePhase</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">game.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: JudgePhase (game.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JudgePhase</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (6/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48,7%
+  </span>
+  <span class="absValue">
+    (19/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package game.phases;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.player.Player;
+&nbsp;import game.GameState;
+&nbsp;import handlers.InputHandler;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+<b class="fc">&nbsp;public class JudgePhase extends Phase {</b>
+&nbsp;    ArrayList&lt;RedApple&gt; redApplesPlayed;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @param state  the game state
+&nbsp;     * @throws IOException if an I/O error occurs
+&nbsp;     * @throws ClassNotFoundException if the class of a serialized object cannot be found
+&nbsp;     * @return the game state
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public GameState executeOnServer(GameState state) throws IOException, ClassNotFoundException {
+<b class="nc">&nbsp;        setRedApplesPlayed(state.getRedApplesToBeJudged());</b>
+<b class="nc">&nbsp;        System.out.println(state.getJudge().getName() + &quot; is the judge.&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        for (Player player : state.getPlayers()) {</b>
+<b class="nc">&nbsp;            super.notifyClient(player.getSocket());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (player.isJudge()) {</b>
+<b class="nc">&nbsp;                Player roundWinner = waitForJudgeDecision(player, state);</b>
+<b class="nc">&nbsp;                state = scoreUp(roundWinner, state);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // print the players data on the server
+<b class="nc">&nbsp;        state.printPlayerData();</b>
+&nbsp;
+<b class="nc">&nbsp;        state.clearPlayersWhoSubmittedRedApples();</b>
+<b class="nc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRedApplesPlayed(ArrayList&lt;RedApple&gt; redApplesPlayed) {
+<b class="fc">&nbsp;        this.redApplesPlayed = redApplesPlayed;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player waitForJudgeDecision(Player player, GameState state) throws IOException, ClassNotFoundException {
+<b class="nc">&nbsp;        System.out.println(&quot;Waiting for the judge (username: &quot;+player.getName()+&quot;) to decide winning red apple.&quot;);</b>
+<b class="nc">&nbsp;        ObjectInputStream inputStream = new ObjectInputStream(player.getSocket().getInputStream());</b>
+<b class="nc">&nbsp;        RedApple redApple = (RedApple) inputStream.readObject();</b>
+<b class="nc">&nbsp;        return state.getRoundWinner(redApple);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public GameState scoreUp(Player roundWinner, GameState state) {
+<b class="fc">&nbsp;        if (roundWinner != null) {</b>
+<b class="fc">&nbsp;            state.addGreenAppleToPlayer(roundWinner);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Judge&#39;s decision is made. The winner of this round is: &quot; + roundWinner.getName());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            System.out.println(&quot;No round winner found for the selected red apple.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the phase on the client
+&nbsp;     * @param player clients player
+&nbsp;     * @throws IOException if an I/O error occurs
+&nbsp;     * @return the player
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Player executeOnClient(Player player) throws IOException {
+<b class="fc">&nbsp;        printJudgeInfo(player);</b>
+<b class="fc">&nbsp;        printRedApples(redApplesPlayed);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (player.isJudge()) {</b>
+<b class="nc">&nbsp;            InputHandler inputHandler = new InputHandler();</b>
+<b class="nc">&nbsp;            RedApple winningRedApple = inputHandler.chooseRedApple(player, redApplesPlayed);</b>
+&nbsp;
+<b class="nc">&nbsp;            ObjectOutputStream outputStream = new ObjectOutputStream(player.getSocket().getOutputStream());</b>
+<b class="nc">&nbsp;            outputStream.writeObject(winningRedApple);</b>
+<b class="nc">&nbsp;            outputStream.flush();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return player;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void printJudgeInfo(Player player) {
+<b class="fc">&nbsp;        if (player.isJudge()) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;You are the judge, please select the red apple that you think is the best match win the green apple. The red apples played by the players are:&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            System.out.println(&quot;You are not the judge, please wait for the judge to make a decision. The red apples played by the players are: &quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void printRedApples(ArrayList&lt;RedApple&gt; redApples) {
+<b class="fc">&nbsp;        int i = 0;</b>
+<b class="fc">&nbsp;        for (RedApple redApple : redApples) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;[&quot;+i+&quot;] &quot; + redApple.getContent());</b>
+<b class="fc">&nbsp;            i++;</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

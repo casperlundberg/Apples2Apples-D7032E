@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > SubmitRedApplePhase</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">game.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: SubmitRedApplePhase (game.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SubmitRedApplePhase</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2,6%
+  </span>
+  <span class="absValue">
+    (1/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package game.phases;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.player.Player;
+&nbsp;import game.models.PlayerPlayedRedAppleModel;
+&nbsp;import handlers.InputHandler;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.net.Socket;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="fc">&nbsp;public class SubmitRedApplePhase extends Phase {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the phase on the server
+&nbsp;     * @param state  the game state
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public GameState executeOnServer(GameState state) {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Thread&gt; threads = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Player player : state.getPlayers()) {</b>
+<b class="nc">&nbsp;            Thread thread = new Thread(() -&gt; {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                        Socket socket = player.getSocket();</b>
+<b class="nc">&nbsp;                        if (!player.isJudge() &amp;&amp; !state.playerThatPlayedRedApple(player)) {</b>
+<b class="nc">&nbsp;                            System.out.println(&quot;Waiting for &quot; + player.getName() + &quot; to submit a red apple&quot;); // server side</b>
+&nbsp;
+<b class="nc">&nbsp;                            super.notifyClient(socket); // notify player to submit red apple</b>
+&nbsp;
+&nbsp;                            // receive the red apple played by the player
+<b class="nc">&nbsp;                            ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());</b>
+<b class="nc">&nbsp;                            PlayerPlayedRedAppleModel playedRedApple = (PlayerPlayedRedAppleModel) inputStream.readObject();</b>
+<b class="nc">&nbsp;                            state.PlayerPlayedRedApple(playedRedApple);</b>
+&nbsp;
+<b class="nc">&nbsp;                            System.out.println(player.getName() + &quot; submitted a red apple&quot;); // server side</b>
+<b class="nc">&nbsp;                        } else {</b>
+<b class="nc">&nbsp;                            super.notifyClient(socket); // notify player that they are the judge</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                } catch (IOException | ClassNotFoundException e) {</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;Error occurred while waiting for &quot; + player.getName() + &quot; to submit a red apple&quot;);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;            });
+<b class="nc">&nbsp;            threads.add(thread);</b>
+<b class="nc">&nbsp;            thread.start();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Wait for all threads to finish
+<b class="nc">&nbsp;        for (Thread thread : threads) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                thread.join();</b>
+<b class="nc">&nbsp;            } catch (InterruptedException e) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Thread interrupted&quot;);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Shuffle the submitted playerPlayedRedApple models
+<b class="nc">&nbsp;        Collections.shuffle(state.getSubmittedRedAppleModel());</b>
+&nbsp;
+<b class="nc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Executes the phase on the client
+&nbsp;     * @param player the player
+&nbsp;     * @return the player
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Player executeOnClient(Player player) throws IOException {
+<b class="nc">&nbsp;        if (player.isJudge()) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;You are the judge, please wait for the other players to submit their red apples&quot;);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            System.out.println(&quot;Choose a red apple to play: &quot;);</b>
+<b class="nc">&nbsp;            player.printHand();</b>
+&nbsp;
+<b class="nc">&nbsp;            InputHandler inputHandler = new InputHandler();</b>
+<b class="nc">&nbsp;            RedApple redApple = inputHandler.chooseRedApple(player, player.getHand());</b>
+&nbsp;
+<b class="nc">&nbsp;            PlayerPlayedRedAppleModel playRedApple = new PlayerPlayedRedAppleModel(player.getPlayerId(), redApple);</b>
+&nbsp;
+<b class="nc">&nbsp;            ObjectOutputStream outputStream = new ObjectOutputStream(player.getSocket().getOutputStream());</b>
+<b class="nc">&nbsp;            outputStream.writeObject(playRedApple);</b>
+<b class="nc">&nbsp;            outputStream.flush();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return player;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 10:04</div>
+</div>
+</body>
+</html>

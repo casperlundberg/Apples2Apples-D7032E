@@ -1,4 +1,4 @@
-package test;
+package test.models;
 
 import game.apples.RedApple;
 import game.models.PlayerPlayedRedAppleModel;

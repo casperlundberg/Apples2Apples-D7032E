@@ -1,0 +1,250 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > PlayerTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.player</a>
+</div>
+
+<h1>Coverage Summary for Class: PlayerTest (test.player)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlayerTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (53/53)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.player;
+&nbsp;
+&nbsp;import game.apples.GreenApple;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.player.Player;
+&nbsp;
+&nbsp;import org.junit.jupiter.api.BeforeEach;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+&nbsp;
+<b class="fc">&nbsp;public class PlayerTest {</b>
+&nbsp;    private Player player;
+&nbsp;
+&nbsp;    @BeforeEach
+&nbsp;    public void setup() {
+<b class="fc">&nbsp;        player = new Player(&quot;Test Player&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPlayer() {
+<b class="fc">&nbsp;        String expectedName = &quot;Test Player&quot;;</b>
+<b class="fc">&nbsp;        assertEquals(expectedName, player.getName());</b>
+<b class="fc">&nbsp;        assertEquals(0, player.getScore());</b>
+<b class="fc">&nbsp;        assertTrue(player.getHand().isEmpty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPlayerIsBot() {
+<b class="fc">&nbsp;        String expectedName = &quot;Test Bot&quot;;</b>
+<b class="fc">&nbsp;        Player player = new Player(expectedName, true);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(expectedName, player.getName());</b>
+<b class="fc">&nbsp;        assertTrue(player.isBot());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPlayerWithSocket() {
+<b class="fc">&nbsp;        String expectedName = &quot;Test Player&quot;;</b>
+<b class="fc">&nbsp;        Player player = new Player(expectedName, null);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(expectedName, player.getName());</b>
+<b class="fc">&nbsp;        assertEquals(0, player.getScore());</b>
+<b class="fc">&nbsp;        assertNull(player.getSocket());</b>
+<b class="fc">&nbsp;        assertTrue(player.getHand().isEmpty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetPlayerId() {
+<b class="fc">&nbsp;        int id = player.getPlayerId();</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(id, player.getPlayerId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetPlayerId() {
+<b class="fc">&nbsp;        int id = 1;</b>
+<b class="fc">&nbsp;        player.setPlayerId(id);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(id, player.getPlayerId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetBot() {
+<b class="fc">&nbsp;        player.setBot(true);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertTrue(player.isBot());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testDrawRedAppleUntilFullHand() {
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 10; i++) {</b>
+<b class="fc">&nbsp;            redApples.add(new RedApple(&quot;Apple &quot; + i));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        player.drawRedAppleUntilFullHand(redApples);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(7, player.getHand().size());</b>
+<b class="fc">&nbsp;        assertEquals(3, redApples.size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testRemoveRedApple() {
+<b class="fc">&nbsp;        RedApple redApple = new RedApple(&quot;Test Apple&quot;);</b>
+<b class="fc">&nbsp;        player.getHand().add(redApple);</b>
+&nbsp;
+<b class="fc">&nbsp;        player.removeRedApple(redApple);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertTrue(player.getHand().isEmpty());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testWinGreenApple() {
+<b class="fc">&nbsp;        GreenApple greenApple = new GreenApple(&quot;Test Apple&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        player.winGreenApple(greenApple);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertEquals(1, player.getScore());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetJudge() {
+<b class="fc">&nbsp;        player.setJudge(true);</b>
+<b class="fc">&nbsp;        assertTrue(player.isJudge());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetSocket() {
+<b class="fc">&nbsp;        player.setSocket(null);</b>
+<b class="fc">&nbsp;        assertNull(player.getSocket());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetDonePlaying() {
+<b class="fc">&nbsp;        assertFalse(player.getDonePlaying());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetDonePlaying() {
+<b class="fc">&nbsp;        player.setDonePlaying(true);</b>
+<b class="fc">&nbsp;        assertTrue(player.getDonePlaying());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPrintHand() {
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 10; i++) {</b>
+<b class="fc">&nbsp;            redApples.add(new RedApple(&quot;Apple &quot; + i));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        player.drawRedAppleUntilFullHand(redApples);</b>
+<b class="fc">&nbsp;        player.printHand();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetHand() {
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 10; i++) {</b>
+<b class="fc">&nbsp;            redApples.add(new RedApple(&quot;Apple &quot; + i));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        player.setHand(redApples);</b>
+<b class="fc">&nbsp;        assertEquals(redApples, player.getHand());</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 10:04</div>
+</div>
+</body>
+</html>

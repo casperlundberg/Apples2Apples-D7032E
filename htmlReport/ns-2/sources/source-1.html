@@ -1,0 +1,382 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > GameState</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">game</a>
+</div>
+
+<h1>Coverage Summary for Class: GameState (game)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameState</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (31/31)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94,2%
+  </span>
+  <span class="absValue">
+    (131/139)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package game;
+&nbsp;
+&nbsp;import game.models.PlayerPlayedRedAppleModel;
+&nbsp;import game.player.Player;
+&nbsp;import game.apples.*;
+&nbsp;import game.phases.*;
+&nbsp;import handlers.InputHandler;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;
+&nbsp;public class GameState {
+&nbsp;    private final ArrayList&lt;Player&gt; players;
+<b class="fc">&nbsp;    private int amountOfHumanPlayers = 1; // Default to 1</b>
+<b class="fc">&nbsp;    private int amountOfBots = 3; // Default to 3</b>
+<b class="fc">&nbsp;    private int winningScore = 8; // Default to 8</b>
+<b class="fc">&nbsp;    private final int MIN_PLAYERS_AND_BOTS_COMBINED = 4;</b>
+<b class="fc">&nbsp;    private boolean gameEnded = false;</b>
+&nbsp;    private ArrayList&lt;GreenApple&gt; greenAppleDeck;
+&nbsp;    private ArrayList&lt;RedApple&gt; redAppleDeck;
+&nbsp;    private ArrayList&lt;Phase&gt; phases;
+&nbsp;    private final ArrayList&lt;PlayerPlayedRedAppleModel&gt; submittedRedApplesModel; // Because we need to keep track of who played what red apple
+&nbsp;
+<b class="fc">&nbsp;    public GameState() {</b>
+<b class="fc">&nbsp;        this.players = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.submittedRedApplesModel = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        loadGreenApples();</b>
+<b class="fc">&nbsp;        loadRedApples();</b>
+<b class="fc">&nbsp;        setupPhases();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void setupPhases() {
+<b class="fc">&nbsp;        this.phases = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.phases.add(new SetupPhase());</b>
+<b class="fc">&nbsp;        this.phases.add(new DrawGreenApplePhase());</b>
+<b class="fc">&nbsp;        this.phases.add(new SubmitRedApplePhase());</b>
+<b class="fc">&nbsp;        this.phases.add(new JudgePhase());</b>
+<b class="fc">&nbsp;        this.phases.add(new CheckGameWinnerPhase());</b>
+<b class="fc">&nbsp;        this.phases.add(new ReplenishPlayersHandsPhase());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setupScoring() {
+<b class="fc">&nbsp;        int playersAndBots = amountOfHumanPlayers + amountOfBots;</b>
+<b class="fc">&nbsp;        if (playersAndBots &gt;= 8) {</b>
+<b class="fc">&nbsp;            winningScore = 4;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            winningScore = 8;</b>
+<b class="fc">&nbsp;            for (int i = 4; i &lt; playersAndBots; i++) {</b>
+<b class="fc">&nbsp;                winningScore--;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;    private void loadGreenApples() {
+<b class="fc">&nbsp;        this.greenAppleDeck = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            for (String line : Files.readAllLines(Paths.get(&quot;src/game/resources&quot;,&quot;green_apples.txt&quot;))) {</b>
+<b class="fc">&nbsp;                this.greenAppleDeck.add(new GreenApple(line));</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Error occurred while loading green apples&quot;);</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        Collections.shuffle(this.greenAppleDeck);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void loadRedApples() {
+<b class="fc">&nbsp;        this.redAppleDeck = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            for (String line : Files.readAllLines(Paths.get(&quot;src/game/resources&quot;,&quot;red_apples.txt&quot;))) {</b>
+<b class="fc">&nbsp;                this.redAppleDeck.add(new RedApple(line));</b>
+<b class="fc">&nbsp;            }</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Error occurred while loading red apples&quot;);</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        Collections.shuffle(this.redAppleDeck);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addPlayer(Player player) {
+<b class="fc">&nbsp;        player.drawRedAppleUntilFullHand(redAppleDeck);</b>
+<b class="fc">&nbsp;        players.add(player);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ArrayList&lt;Player&gt; getPlayers() {
+<b class="fc">&nbsp;        return players;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player getPlayerById(int id) {
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            if (player.getPlayerId() == id) {</b>
+<b class="fc">&nbsp;                return player;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public GreenApple getCurrentGreenApple() {
+<b class="fc">&nbsp;        return greenAppleDeck.get(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void fillPlayersHands() {
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            redAppleDeck = player.drawRedAppleUntilFullHand(redAppleDeck);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addGreenAppleToDeck(GreenApple greenApple) {
+<b class="fc">&nbsp;        greenAppleDeck.add(greenApple);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ArrayList&lt;PlayerPlayedRedAppleModel&gt; getSubmittedRedAppleModel() {
+<b class="fc">&nbsp;        return submittedRedApplesModel;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void PlayerPlayedRedApple(PlayerPlayedRedAppleModel playerPlayedRedAppleModel) {
+<b class="fc">&nbsp;        submittedRedApplesModel.add(playerPlayedRedAppleModel);</b>
+&nbsp;        // remove played red apple from player&#39;s hand
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            if (player.getPlayerId() == playerPlayedRedAppleModel.playerId()) {</b>
+<b class="fc">&nbsp;                player.removeRedApple(playerPlayedRedAppleModel.redApple());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Phase getCurrentPhase() {
+<b class="fc">&nbsp;        return phases.get(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void nextPhase() {
+<b class="fc">&nbsp;        if (phases.get(0) instanceof SetupPhase) {</b>
+<b class="fc">&nbsp;            phases.remove(0);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            phases.add(phases.remove(0));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void nextJudge() {
+<b class="fc">&nbsp;        boolean judgeExists = false;</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; players.size(); i++) {</b>
+<b class="fc">&nbsp;            if (players.get(i).isJudge()) {</b>
+<b class="fc">&nbsp;                judgeExists = true;</b>
+<b class="fc">&nbsp;                players.get(i).setJudge(false);</b>
+<b class="fc">&nbsp;                if (i == players.size() - 1) {</b>
+<b class="fc">&nbsp;                    players.get(0).setJudge(true);</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    players.get(i + 1).setJudge(true);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (!judgeExists) {</b>
+<b class="fc">&nbsp;            randomizeJudge();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void randomizeJudge() {
+<b class="fc">&nbsp;        int i = new Random().nextInt(players.size());</b>
+<b class="fc">&nbsp;        players.get(i).setJudge(true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player getJudge() {
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            if (player.isJudge()) {</b>
+<b class="fc">&nbsp;                return player;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ArrayList&lt;RedApple&gt; getRedApplesToBeJudged() {
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {</b>
+<b class="fc">&nbsp;            redApples.add(playerPlayedRedAppleModel.redApple());</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return redApples;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player getRoundWinner(RedApple winningRedApple) {
+<b class="fc">&nbsp;        System.out.println(&quot;\n*** ROUND WINNER ***&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;The winning red apple is: &quot; + winningRedApple.getContent());</b>
+<b class="fc">&nbsp;        for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;--------------------&quot;);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player: &quot; + playerPlayedRedAppleModel.playerId() + &quot; played: &quot; + playerPlayedRedAppleModel.redApple().getContent());</b>
+<b class="fc">&nbsp;            if (playerPlayedRedAppleModel.redApple().getContent().equals(winningRedApple.getContent())) {</b>
+<b class="fc">&nbsp;                return getPlayerById(playerPlayedRedAppleModel.playerId());</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void clearPlayersWhoSubmittedRedApples() {
+<b class="fc">&nbsp;        submittedRedApplesModel.clear();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addGreenAppleToPlayer(Player player) {
+<b class="fc">&nbsp;        player.winGreenApple(greenAppleDeck.remove(0));</b>
+&nbsp;        // update the player in the players list
+<b class="fc">&nbsp;        for (int i = 0; i &lt; players.size(); i++) {</b>
+<b class="fc">&nbsp;            if (players.get(i).equals(player)) {</b>
+<b class="fc">&nbsp;                players.set(i, player);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player getGameWinner() {
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            if (player.getScore() &gt;= winningScore){</b>
+<b class="fc">&nbsp;                gameEnded = true;</b>
+<b class="fc">&nbsp;                return player;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isGameEnded() {
+<b class="fc">&nbsp;        return gameEnded;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean playerThatPlayedRedApple(Player player) {
+<b class="fc">&nbsp;        for (PlayerPlayedRedAppleModel playerPlayedRedAppleModel : submittedRedApplesModel) {</b>
+<b class="fc">&nbsp;            if (getPlayerById(playerPlayedRedAppleModel.playerId()).equals(player)) {</b>
+<b class="fc">&nbsp;                return true;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean allPlayersJoined() {
+<b class="fc">&nbsp;        if (players == null) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return players.size() == amountOfHumanPlayers + amountOfBots;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAmountOfHumanPlayers(int amountOfHumanPlayers) {
+<b class="fc">&nbsp;        this.amountOfHumanPlayers = amountOfHumanPlayers;</b>
+<b class="fc">&nbsp;        fillBotsIfNeeded();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAmountOfBots(int amountOfBots) {
+<b class="fc">&nbsp;        this.amountOfBots = amountOfBots;</b>
+<b class="fc">&nbsp;        fillBotsIfNeeded();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void fillBotsIfNeeded() {
+<b class="fc">&nbsp;        if (amountOfHumanPlayers + amountOfBots &lt; 4) {</b>
+<b class="fc">&nbsp;            amountOfBots = MIN_PLAYERS_AND_BOTS_COMBINED - amountOfHumanPlayers;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addBots() {
+<b class="fc">&nbsp;        for (int i = 1; i &lt;= amountOfBots; i++) {</b>
+<b class="fc">&nbsp;            if (allPlayersJoined()) {</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                addPlayer(new Player(&quot;Bot &quot; + (players.size()+1), true));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void printPlayerData() {
+<b class="fc">&nbsp;        System.out.println();</b>
+<b class="fc">&nbsp;        System.out.println(&quot;PLAYER DATA:&quot;);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;====================================&quot;);</b>
+<b class="fc">&nbsp;        for (Player player : players) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player: &quot; + player.getName());</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player ID: &quot; + player.getPlayerId());</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player Hand: &quot;);</b>
+<b class="fc">&nbsp;            player.printHand();</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player Score: &quot; + player.getScore());</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Player Judge: &quot; + player.isJudge());</b>
+<b class="fc">&nbsp;            System.out.println();</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        System.out.println(&quot;====================================&quot;);</b>
+<b class="fc">&nbsp;        System.out.println();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

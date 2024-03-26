@@ -1,0 +1,408 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > GameStateTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.GameState</a>
+</div>
+
+<h1>Coverage Summary for Class: GameStateTest (test.GameState)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameStateTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (147/147)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.GameState;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.models.PlayerPlayedRedAppleModel;
+&nbsp;import game.phases.DrawGreenApplePhase;
+&nbsp;import game.phases.SetupPhase;
+&nbsp;import game.phases.SubmitRedApplePhase;
+&nbsp;import game.player.Player;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.*;
+<b class="fc">&nbsp;public class GameStateTest {</b>
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGameState() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNotNull(state);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetPlayers() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 2&quot;));</b>
+<b class="fc">&nbsp;        assertEquals(2, state.getPlayers().size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetPlayerById() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+<b class="fc">&nbsp;        assertEquals(player, state.getPlayerById(player.getPlayerId()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetPlayerByIdWithInvalidId() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNull(state.getPlayerById(1));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetCurrentGreenApple() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getCurrentGreenApple());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testAddGreenAppleToDeck() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addGreenAppleToDeck(state.getCurrentGreenApple());</b>
+<b class="fc">&nbsp;        assertNotNull(state);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testFillPlayersHands() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 2&quot;));</b>
+<b class="fc">&nbsp;        state.fillPlayersHands();</b>
+<b class="fc">&nbsp;        for (Player player : state.getPlayers()) {</b>
+<b class="fc">&nbsp;            assertEquals(7, player.getHand().size());</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSubmittedRedAppleModel() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+&nbsp;
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        player.setPlayerId(1);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        RedApple toBeSubmitted = player.getHand().get(0);</b>
+&nbsp;
+<b class="fc">&nbsp;        ArrayList&lt;RedApple&gt; redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        redApples.add(toBeSubmitted);</b>
+&nbsp;
+<b class="fc">&nbsp;        PlayerPlayedRedAppleModel model = new PlayerPlayedRedAppleModel(player.getPlayerId(), toBeSubmitted);</b>
+<b class="fc">&nbsp;        state.PlayerPlayedRedApple(model);</b>
+&nbsp;
+&nbsp;        // current hand size is 7 in Gamestate.java Constants
+<b class="fc">&nbsp;        assertEquals(6, player.getHand().size());</b>
+<b class="fc">&nbsp;        assertEquals(1, state.getSubmittedRedAppleModel().size());</b>
+&nbsp;
+&nbsp;        // check that the red apples shown to judge is the same as the submitted red apples
+<b class="fc">&nbsp;        assertEquals(redApples, state.getRedApplesToBeJudged());</b>
+&nbsp;
+&nbsp;        // check that the round winner is not null, aka found in gamestate
+<b class="fc">&nbsp;        Player roundWinner = state.getRoundWinner(toBeSubmitted);</b>
+<b class="fc">&nbsp;        assertNotNull(roundWinner);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testCurrentPhase() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getCurrentPhase());</b>
+<b class="fc">&nbsp;        assertInstanceOf(SetupPhase.class, state.getCurrentPhase());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testNextPhase() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getCurrentPhase());</b>
+<b class="fc">&nbsp;        assertInstanceOf(DrawGreenApplePhase.class, state.getCurrentPhase());</b>
+&nbsp;
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+<b class="fc">&nbsp;        state.nextPhase();</b>
+&nbsp;
+<b class="fc">&nbsp;        assertNotNull(state.getCurrentPhase());</b>
+<b class="fc">&nbsp;        assertInstanceOf(SubmitRedApplePhase.class, state.getCurrentPhase());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testNextJudge() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        player.setPlayerId(1);</b>
+<b class="fc">&nbsp;        Player player2 = new Player(&quot;Player 2&quot;);</b>
+<b class="fc">&nbsp;        player.setPlayerId(2);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        state.nextJudge();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getJudge());</b>
+<b class="fc">&nbsp;        assertEquals(player, state.getJudge());</b>
+&nbsp;
+<b class="fc">&nbsp;        state.addPlayer(player2);</b>
+&nbsp;
+&nbsp;        // since first player is made judge before player2 is added we know that player2 will be judge when a new one is selected
+<b class="fc">&nbsp;        state.nextJudge();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getJudge());</b>
+<b class="fc">&nbsp;        assertEquals(player2, state.getJudge());</b>
+&nbsp;
+<b class="fc">&nbsp;        state.nextJudge();</b>
+<b class="fc">&nbsp;        assertNotNull(state.getJudge());</b>
+<b class="fc">&nbsp;        assertEquals(player, state.getJudge());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testSetUpScoring() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+&nbsp;
+<b class="fc">&nbsp;        state.setAmountOfHumanPlayers(1);</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        state.setAmountOfBots(1);</b>
+<b class="fc">&nbsp;        state.setAmountOfHumanPlayers(1);</b>
+<b class="fc">&nbsp;        state.addBots();</b>
+<b class="fc">&nbsp;        state.setupScoring();</b>
+<b class="fc">&nbsp;        assertEquals(4, state.getPlayers().size());</b>
+&nbsp;
+<b class="fc">&nbsp;        state.setAmountOfBots(4);</b>
+<b class="fc">&nbsp;        state.addBots();</b>
+<b class="fc">&nbsp;        state.setupScoring();</b>
+<b class="fc">&nbsp;        assertEquals(5, state.getPlayers().size());</b>
+&nbsp;
+<b class="fc">&nbsp;        state.setAmountOfBots(8);</b>
+<b class="fc">&nbsp;        state.addBots();</b>
+<b class="fc">&nbsp;        state.setupScoring();</b>
+<b class="fc">&nbsp;        assertEquals(9, state.getPlayers().size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetInvalidPlayer() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNull(state.getPlayerById(1));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetInvalidJudge() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+<b class="fc">&nbsp;        assertNull(state.getJudge());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void getInvalidRoundWinner() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNull(state.getRoundWinner(new RedApple(&quot;Test&quot;)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testClearSubmittedRedApples() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+&nbsp;
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        player.setPlayerId(1);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        RedApple toBeSubmitted = player.getHand().get(0);</b>
+&nbsp;
+<b class="fc">&nbsp;        PlayerPlayedRedAppleModel model = new PlayerPlayedRedAppleModel(player.getPlayerId(), toBeSubmitted);</b>
+<b class="fc">&nbsp;        state.PlayerPlayedRedApple(model);</b>
+&nbsp;
+<b class="fc">&nbsp;        state.clearPlayersWhoSubmittedRedApples();</b>
+<b class="fc">&nbsp;        assertEquals(6, player.getHand().size());</b>
+<b class="fc">&nbsp;        assertEquals(0, state.getSubmittedRedAppleModel().size());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testAddGreenAppleToPlayer() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+<b class="fc">&nbsp;        state.addGreenAppleToPlayer(player);</b>
+<b class="fc">&nbsp;        assertEquals(1, state.getPlayers().get(0).getScore());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testAddGreenAppleToInvalidPlayer() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+&nbsp;
+&nbsp;        // Player is not added to the gamestate
+&nbsp;        // state.addPlayer(player);
+&nbsp;
+&nbsp;        // Dummy player
+<b class="fc">&nbsp;        Player player2 = new Player(&quot;Player 2&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player2);</b>
+&nbsp;
+&nbsp;        // Player 2 is the only one in the gamestate and therefore the only one that can have a green apple added to it
+&nbsp;        // The below line does not change the score of player 2
+<b class="fc">&nbsp;        state.addGreenAppleToPlayer(player);</b>
+<b class="fc">&nbsp;        assertEquals(0, state.getPlayers().get(0).getScore());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testIsGameEnded() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertFalse(state.isGameEnded());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testInvalidGetGameWinner() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertNull(state.getGameWinner());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testGetGameWinner() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.setAmountOfBots(4);</b>
+<b class="fc">&nbsp;        state.setAmountOfHumanPlayers(1);</b>
+<b class="fc">&nbsp;        state.addBots();</b>
+&nbsp;
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+<b class="fc">&nbsp;        state.setupScoring();</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; 7; i++) {</b>
+<b class="fc">&nbsp;            state.addGreenAppleToPlayer(player);</b>
+<b class="fc">&nbsp;            if (state.getGameWinner() != null) {</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        assertTrue(state.isGameEnded());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testInvalidPlayerThatPlayedRedApple() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+<b class="fc">&nbsp;        assertFalse(state.playerThatPlayedRedApple(player));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPlayerThatPlayedRedApple() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        Player player = new Player(&quot;Player 1&quot;);</b>
+<b class="fc">&nbsp;        state.addPlayer(player);</b>
+&nbsp;
+<b class="fc">&nbsp;        RedApple toBeSubmitted = player.getHand().get(0);</b>
+&nbsp;
+<b class="fc">&nbsp;        PlayerPlayedRedAppleModel model = new PlayerPlayedRedAppleModel(player.getPlayerId(), toBeSubmitted);</b>
+<b class="fc">&nbsp;        state.PlayerPlayedRedApple(model);</b>
+&nbsp;
+<b class="fc">&nbsp;        assertTrue(state.playerThatPlayedRedApple(player));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testAllPlayersJoined() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        assertFalse(state.allPlayersJoined());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testPrintPlayers() {
+<b class="fc">&nbsp;        GameState state = new GameState();</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 1&quot;));</b>
+<b class="fc">&nbsp;        state.addPlayer(new Player(&quot;Player 2&quot;));</b>
+<b class="fc">&nbsp;        state.printPlayerData();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

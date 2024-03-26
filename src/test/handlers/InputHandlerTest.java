@@ -1,7 +1,7 @@
-package test;
+package test.handlers;
 
 import game.apples.RedApple;
-import game.players.Player;
+import game.player.Player;
 import handlers.InputHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

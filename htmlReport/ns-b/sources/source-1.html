@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > InputHandlerTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">test.handlers</a>
+</div>
+
+<h1>Coverage Summary for Class: InputHandlerTest (test.handlers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">InputHandlerTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (4/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (12/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package test.handlers;
+&nbsp;
+&nbsp;import game.apples.RedApple;
+&nbsp;import game.player.Player;
+&nbsp;import handlers.InputHandler;
+&nbsp;import org.junit.jupiter.api.AfterEach;
+&nbsp;import org.junit.jupiter.api.BeforeEach;
+&nbsp;import org.junit.jupiter.api.Test;
+&nbsp;
+&nbsp;import java.io.ByteArrayInputStream;
+&nbsp;import java.io.InputStream;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertEquals;
+&nbsp;import static org.junit.jupiter.api.Assertions.assertTrue;
+&nbsp;
+<b class="fc">&nbsp;public class InputHandlerTest {</b>
+&nbsp;    private InputHandler inputHandler;
+&nbsp;    private Player player;
+&nbsp;    private ArrayList&lt;RedApple&gt; redApples;
+<b class="fc">&nbsp;    private final InputStream sysInBackup = System.in; // Backup System.in to restore it later</b>
+&nbsp;
+&nbsp;    @BeforeEach
+&nbsp;    public void setUp() {
+<b class="fc">&nbsp;        inputHandler = new InputHandler();</b>
+<b class="fc">&nbsp;        player = new Player(&quot;Test Player&quot;);</b>
+<b class="fc">&nbsp;        redApples = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        redApples.add(new RedApple(&quot;Apple 1&quot;));</b>
+<b class="fc">&nbsp;        redApples.add(new RedApple(&quot;Apple 2&quot;));</b>
+<b class="fc">&nbsp;        redApples.add(new RedApple(&quot;Apple 3&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @AfterEach
+&nbsp;    public void tearDown() {
+<b class="fc">&nbsp;        System.setIn(sysInBackup); // Reset System.in to its original</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Test
+&nbsp;    public void testBotChooseRedApple() {
+<b class="fc">&nbsp;        player.setBot(true);</b>
+<b class="fc">&nbsp;        RedApple chosenApple = inputHandler.chooseRedApple(player, redApples);</b>
+<b class="fc">&nbsp;        assertTrue(redApples.contains(chosenApple), &quot;Chosen apple should be in the list of red apples&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;//    @Test
+&nbsp;//    public void testPlayerChooseRedApple() {
+&nbsp;//        provideInput(&quot;0\n&quot;);
+&nbsp;//        RedApple chosenApple = inputHandler.chooseRedApple(player, redApples);
+&nbsp;//        assertEquals(&quot;Apple 1&quot;, chosenApple.getContent(), &quot;Chosen apple should be &#39;Apple 1&#39;&quot;);
+&nbsp;//    }
+&nbsp;//
+&nbsp;//    @Test
+&nbsp;//    public void testGetPlayerNameInput() {
+&nbsp;//        provideInput(&quot;Test Player\n&quot;);
+&nbsp;//        String playerName = inputHandler.getPlayerNameInput();
+&nbsp;//        assertEquals(&quot;Test Player&quot;, playerName, &quot;Player name should be &#39;Test Player&#39;&quot;);
+&nbsp;//
+&nbsp;//    }
+&nbsp;
+&nbsp;    // Tests with input currently not working, maybe needs some mockup or framework that handles that.
+&nbsp;    void provideInput(String data) {
+<b class="nc">&nbsp;        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());</b>
+<b class="nc">&nbsp;        System.setIn(testIn);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

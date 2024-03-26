@@ -1,4 +1,4 @@
-package game.players;
+package game.player;
 
 import game.apples.GreenApple;
 import game.apples.RedApple;

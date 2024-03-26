@@ -1,7 +1,7 @@
 package client;
 
 import game.phases.Phase;
-import game.players.Player;
+import game.player.Player;
 import handlers.InputHandler;
 
 import java.io.IOException;

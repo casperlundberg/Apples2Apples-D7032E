@@ -1,4 +1,4 @@
-package test;
+package test.apples;
 
 import game.apples.Apple;
 import org.junit.jupiter.api.Test;

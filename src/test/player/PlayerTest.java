@@ -1,8 +1,8 @@
-package test;
+package test.player;
 
 import game.apples.GreenApple;
 import game.apples.RedApple;
-import game.players.Player;
+import game.player.Player;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,5 +132,15 @@ public class PlayerTest {
         }
         player.drawRedAppleUntilFullHand(redApples);
         player.printHand();
+    }
+
+    @Test
+    public void testSetHand() {
+        ArrayList<RedApple> redApples = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            redApples.add(new RedApple("Apple " + i));
+        }
+        player.setHand(redApples);
+        assertEquals(redApples, player.getHand());
     }
 }

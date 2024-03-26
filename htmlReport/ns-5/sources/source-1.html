@@ -1,0 +1,164 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > CheckGameWinnerPhase</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">game.phases</a>
+</div>
+
+<h1>Coverage Summary for Class: CheckGameWinnerPhase (game.phases)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CheckGameWinnerPhase</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60,9%
+  </span>
+  <span class="absValue">
+    (14/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package game.phases;
+&nbsp;
+&nbsp;import game.GameState;
+&nbsp;import game.player.Player;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;
+<b class="fc">&nbsp;public class CheckGameWinnerPhase extends Phase {</b>
+<b class="fc">&nbsp;    boolean gameEnded = false;</b>
+&nbsp;    String winnerName;
+&nbsp;    int winnerId;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public GameState executeOnServer(GameState state) throws IOException {
+<b class="nc">&nbsp;        Player gameWinner = getGameWinner(state); // currently must be the round winner or null cuz only rounds give points</b>
+<b class="nc">&nbsp;        for (Player player : state.getPlayers()) {</b>
+<b class="nc">&nbsp;            if (gameWinner != null) {</b>
+<b class="nc">&nbsp;                setGameEnded(true);</b>
+<b class="nc">&nbsp;                setWinnerName(gameWinner.getName());</b>
+<b class="nc">&nbsp;                setWinnerId(gameWinner.getPlayerId());</b>
+<b class="nc">&nbsp;                super.notifyClient(player.getSocket());</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Player getGameWinner(GameState state) {
+<b class="fc">&nbsp;        return state.getGameWinner();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGameEnded(boolean gameEnded) {
+<b class="fc">&nbsp;        this.gameEnded = gameEnded;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setWinnerName(String winnerName) {
+<b class="fc">&nbsp;        this.winnerName = winnerName;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setWinnerId(int winnerId) {
+<b class="fc">&nbsp;        this.winnerId = winnerId;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Player executeOnClient(Player player) throws IOException {
+<b class="fc">&nbsp;        if (gameEnded) {</b>
+<b class="fc">&nbsp;            player.setDonePlaying(true);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (winnerId == player.getPlayerId()) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Congratulations! You have won the game!&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                System.out.println(&quot;The game winner is: &quot; + winnerName);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            player.getSocket().close();</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            System.out.println(&quot;The game has not ended yet, prepare for next round.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return player;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-26 11:13</div>
+</div>
+</body>
+</html>

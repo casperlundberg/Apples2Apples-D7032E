@@ -2,7 +2,7 @@ package game.phases;
 
 import game.GameState;
 import game.apples.GreenApple;
-import game.players.Player;
+import game.player.Player;
 
 import java.io.IOException;
 
@@ -15,16 +15,26 @@ public class DrawGreenApplePhase extends Phase {
      */
     @Override
     public GameState executeOnServer(GameState state) throws IOException {
-        state.nextJudge(); // Set next player as judge if judge exist, otherwise randomize
-        judgeId = state.getJudge().getPlayerId();
+        state = nextJudge(state);
+        state = nextGreenApple(state);
 
-        greenApple = state.getCurrentGreenApple();
-        state.addGreenAppleToDeck(state.getCurrentGreenApple());
         // notify all players of the current green apple
         for (Player player : state.getPlayers()) {
             super.notifyClient(player.getSocket());
         }
 
+        return state;
+    }
+
+    public GameState nextJudge(GameState state) {
+        state.nextJudge(); // Set next player as judge if judge exist, otherwise randomize
+        judgeId = state.getJudge().getPlayerId();
+        return state;
+    }
+
+    public GameState nextGreenApple(GameState state) {
+        greenApple = state.getCurrentGreenApple();
+        state.addGreenAppleToDeck(state.getCurrentGreenApple());
         return state;
     }
 
